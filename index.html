@@ -1,0 +1,2917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EY — Contact Centre Transformation Business Case v7</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   EY DESIGN SYSTEM — VARIABLES
+   ═══════════════════════════════════════════════════ */
+:root {
+  --ey-yellow: #FFE600;
+  --ey-yellow-dim: #FFE60020;
+  --ey-yellow-soft: #FFF9CC;
+  --ey-dark: #2E2E38;
+  --ey-dark-light: #3B3B47;
+  --ey-dark-lighter: #4A4A56;
+  --ey-gray-900: #1A1A2E;
+  --ey-gray-800: #2E2E38;
+  --ey-gray-700: #3B3B47;
+  --ey-gray-600: #555566;
+  --ey-gray-500: #747480;
+  --ey-gray-400: #9494A0;
+  --ey-gray-300: #C4C4CC;
+  --ey-gray-200: #E0E0E6;
+  --ey-gray-100: #F0F0F4;
+  --ey-gray-50: #F7F7FA;
+  --ey-white: #FFFFFF;
+  --ey-green: #168736;
+  --ey-green-bg: #168736 15;
+  --ey-red: #C4122F;
+  --ey-red-bg: #C4122F15;
+  --ey-blue: #155CB4;
+  --ey-blue-bg: #155CB415;
+  --ey-orange: #F0AB00;
+  --ey-teal: #00A3AE;
+  --ey-purple: #7F3F98;
+  --font-main: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.15);
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--ey-gray-50);color:var(--ey-dark);line-height:1.5;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-weight:600;line-height:1.3}
+a{color:var(--ey-blue);text-decoration:none}
+
+/* ═══════════════════════════════════════════════════
+   TOP BAR
+   ═══════════════════════════════════════════════════ */
+.topbar{
+  background:var(--ey-dark);height:56px;display:flex;align-items:center;
+  padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100;
+}
+.topbar-logo{
+  display:flex;align-items:center;gap:12px;
+}
+.topbar-logo .ey-mark{
+  background:var(--ey-yellow);color:var(--ey-dark);font-weight:700;font-size:18px;
+  padding:4px 10px;letter-spacing:-0.5px;
+}
+.topbar-logo span{color:var(--ey-white);font-size:15px;font-weight:500;opacity:0.9}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:16px}
+.topbar-right .badge{
+  background:var(--ey-yellow);color:var(--ey-dark);font-size:11px;font-weight:700;
+  padding:3px 8px;border-radius:10px;
+}
+.topbar-right .btn-export{
+  background:transparent;border:1px solid var(--ey-gray-600);color:var(--ey-gray-300);
+  padding:6px 14px;border-radius:var(--radius);cursor:pointer;font-size:12px;
+  font-family:var(--font-main);font-weight:500;transition:var(--transition);
+}
+.topbar-right .btn-export:hover{border-color:var(--ey-yellow);color:var(--ey-yellow)}
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════════ */
+.app-layout{display:flex;margin-top:56px;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{
+  width:260px;background:var(--ey-white);border-right:1px solid var(--ey-gray-200);
+  position:fixed;top:56px;bottom:0;overflow-y:auto;z-index:50;
+  padding:20px 0;
+}
+.sidebar-section{padding:0 16px;margin-bottom:20px}
+.sidebar-section-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--ey-gray-500);padding:0 12px;margin-bottom:8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);
+  cursor:pointer;transition:var(--transition);font-size:13px;font-weight:500;
+  color:var(--ey-gray-600);margin-bottom:2px;position:relative;
+}
+.nav-item:hover{background:var(--ey-gray-100);color:var(--ey-dark)}
+.nav-item.active{background:var(--ey-yellow-dim);color:var(--ey-dark);font-weight:600}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  background:var(--ey-yellow);border-radius:0 2px 2px 0;
+}
+.nav-num{
+  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;background:var(--ey-gray-100);color:var(--ey-gray-600);flex-shrink:0;
+}
+.nav-item.active .nav-num{background:var(--ey-yellow);color:var(--ey-dark)}
+.nav-item.completed .nav-num{background:var(--ey-green);color:white}
+.nav-item .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.sidebar-divider{height:1px;background:var(--ey-gray-200);margin:12px 16px}
+
+/* MAIN CONTENT */
+.main-content{margin-left:260px;flex:1;padding:28px 36px;max-width:calc(100vw - 260px)}
+
+/* ═══════════════════════════════════════════════════
+   PAGE HEADER
+   ═══════════════════════════════════════════════════ */
+.page-header{margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:22px;color:var(--ey-dark)}
+.page-header p{font-size:13px;color:var(--ey-gray-500);margin-top:4px;max-width:700px}
+.page-header .actions{display:flex;gap:8px;align-items:center}
+
+/* ═══════════════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════════════ */
+.card{
+  background:var(--ey-white);border:1px solid var(--ey-gray-200);border-radius:var(--radius-lg);
+  padding:20px;margin-bottom:16px;transition:var(--transition);
+}
+.card:hover{box-shadow:var(--shadow-sm)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-header h3{font-size:15px;color:var(--ey-dark)}
+.card-header .tag{
+  font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;
+}
+.tag-green{background:#E6F5EB;color:var(--ey-green)}
+.tag-red{background:#FDEAED;color:var(--ey-red)}
+.tag-blue{background:#E8F0FB;color:var(--ey-blue)}
+.tag-yellow{background:var(--ey-yellow-soft);color:#8B7500}
+.tag-gray{background:var(--ey-gray-100);color:var(--ey-gray-600)}
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);
+  font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;
+  border:none;transition:var(--transition);
+}
+.btn-primary{background:var(--ey-yellow);color:var(--ey-dark)}
+.btn-primary:hover{background:#F0D800;box-shadow:0 2px 8px rgba(255,230,0,0.3)}
+.btn-secondary{background:var(--ey-gray-100);color:var(--ey-dark);border:1px solid var(--ey-gray-200)}
+.btn-secondary:hover{background:var(--ey-gray-200)}
+.btn-dark{background:var(--ey-dark);color:var(--ey-white)}
+.btn-dark:hover{background:var(--ey-dark-light)}
+.btn-danger{background:var(--ey-red);color:white}
+.btn-danger:hover{background:#A00F28}
+.btn-ghost{background:transparent;color:var(--ey-gray-600);padding:6px 10px}
+.btn-ghost:hover{background:var(--ey-gray-100);color:var(--ey-dark)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-lg{padding:12px 24px;font-size:15px}
+.btn-run{
+  background:var(--ey-yellow);color:var(--ey-dark);padding:12px 28px;font-size:15px;
+  font-weight:700;border-radius:var(--radius-lg);box-shadow:0 4px 16px rgba(255,230,0,0.25);
+}
+.btn-run:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,230,0,0.35)}
+
+/* ═══════════════════════════════════════════════════
+   FORMS
+   ═══════════════════════════════════════════════════ */
+.form-grid{display:grid;gap:14px}
+.form-grid-2{grid-template-columns:1fr 1fr}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr}
+.form-grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:12px;font-weight:600;color:var(--ey-gray-600)}
+.form-group input,.form-group select,.form-group textarea{
+  padding:8px 12px;border:1px solid var(--ey-gray-300);border-radius:var(--radius);
+  font-family:var(--font-main);font-size:13px;color:var(--ey-dark);background:var(--ey-white);
+  transition:var(--transition);
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  outline:none;border-color:var(--ey-yellow);box-shadow:0 0 0 3px var(--ey-yellow-dim);
+}
+.form-group input[type="number"]{font-family:var(--font-mono);font-size:13px}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-group .hint{font-size:11px;color:var(--ey-gray-400);margin-top:2px}
+
+.form-row{display:flex;gap:12px;align-items:flex-end}
+.form-row .form-group{flex:1}
+
+/* Checkboxes */
+.checkbox-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.checkbox-item{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--ey-gray-200);
+  border-radius:var(--radius);cursor:pointer;transition:var(--transition);font-size:12px;
+  font-weight:500;color:var(--ey-gray-600);
+}
+.checkbox-item:hover{border-color:var(--ey-gray-300);background:var(--ey-gray-50)}
+.checkbox-item.selected{border-color:var(--ey-yellow);background:var(--ey-yellow-dim);color:var(--ey-dark)}
+.checkbox-item input{display:none}
+
+/* Toggle */
+.toggle{
+  position:relative;display:inline-block;width:36px;height:20px;
+}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{
+  position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;
+  background:var(--ey-gray-300);border-radius:10px;transition:var(--transition);
+}
+.toggle-slider::before{
+  content:'';position:absolute;height:16px;width:16px;left:2px;bottom:2px;
+  background:white;border-radius:50%;transition:var(--transition);
+}
+.toggle input:checked+.toggle-slider{background:var(--ey-yellow)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(16px)}
+
+/* ═══════════════════════════════════════════════════
+   TABLES
+   ═══════════════════════════════════════════════════ */
+.table-wrap{overflow-x:auto;border:1px solid var(--ey-gray-200);border-radius:var(--radius-lg)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--ey-gray-800)}
+thead th{
+  color:var(--ey-white);font-weight:600;text-align:left;padding:10px 12px;
+  font-size:12px;white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--ey-gray-100);transition:var(--transition)}
+tbody tr:hover{background:var(--ey-gray-50)}
+tbody td{padding:8px 12px;color:var(--ey-gray-700)}
+tbody td.mono{font-family:var(--font-mono);font-size:12px}
+
+/* ═══════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--ey-white);border-radius:var(--radius-xl);width:100%;max-width:900px;
+  max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-xl);
+}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;padding:20px 24px;
+  border-bottom:1px solid var(--ey-gray-200);position:sticky;top:0;background:var(--ey-white);
+  z-index:10;border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+}
+.modal-header h2{font-size:18px}
+.modal-close{
+  width:32px;height:32px;border-radius:50%;border:none;background:var(--ey-gray-100);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;
+  color:var(--ey-gray-600);transition:var(--transition);
+}
+.modal-close:hover{background:var(--ey-gray-200);color:var(--ey-dark)}
+.modal-body{padding:24px}
+.modal-footer{
+  display:flex;justify-content:flex-end;gap:8px;padding:16px 24px;
+  border-top:1px solid var(--ey-gray-200);
+}
+
+/* ═══════════════════════════════════════════════════
+   INITIATIVE CARDS
+   ═══════════════════════════════════════════════════ */
+.init-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.init-card{
+  background:var(--ey-white);border:1px solid var(--ey-gray-200);border-radius:var(--radius-lg);
+  padding:16px;transition:var(--transition);position:relative;
+}
+.init-card:hover{box-shadow:var(--shadow-md);border-color:var(--ey-gray-300)}
+.init-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.init-card-title{font-size:14px;font-weight:600;color:var(--ey-dark)}
+.init-card-desc{font-size:12px;color:var(--ey-gray-500);margin-bottom:10px;line-height:1.4}
+.init-card-meta{display:flex;flex-wrap:wrap;gap:6px}
+.init-card-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--ey-gray-100)}
+.wf-step{display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--ey-gray-200);border-radius:8px;background:#fff;cursor:grab;user-select:none;transition:all 0.15s}
+.wf-step:active{cursor:grabbing}
+.wf-step.dragging{opacity:0.5;border-color:var(--ey-yellow);background:var(--ey-yellow-bg)}
+.wf-step .wf-num{width:28px;height:28px;border-radius:50%;background:var(--ey-yellow);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0}
+.wf-step .wf-label{font-weight:600;font-size:0.95rem}
+.wf-step .wf-desc{font-size:0.8rem;color:var(--ey-gray-500)}
+.wf-step .wf-grip{color:var(--ey-gray-400);font-size:1.1rem;flex-shrink:0}
+
+/* ═══════════════════════════════════════════════════
+   VOLUME MATRIX
+   ═══════════════════════════════════════════════════ */
+.matrix-table{font-size:13px}
+.matrix-table input{
+  width:80px;padding:5px 8px;text-align:right;border:1px solid var(--ey-gray-200);
+  border-radius:4px;font-family:var(--font-mono);font-size:12px;
+}
+.matrix-table input:focus{border-color:var(--ey-yellow);outline:none;box-shadow:0 0 0 2px var(--ey-yellow-dim)}
+.matrix-total{font-weight:700;background:var(--ey-gray-50) !important;font-family:var(--font-mono)}
+
+/* ═══════════════════════════════════════════════════
+   DASHBOARD METRICS
+   ═══════════════════════════════════════════════════ */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.metric-card{
+  background:var(--ey-white);border:1px solid var(--ey-gray-200);border-radius:var(--radius-lg);
+  padding:18px;position:relative;overflow:hidden;
+}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.metric-card.yellow::before{background:var(--ey-yellow)}
+.metric-card.green::before{background:var(--ey-green)}
+.metric-card.blue::before{background:var(--ey-blue)}
+.metric-card.red::before{background:var(--ey-red)}
+.metric-card.teal::before{background:var(--ey-teal)}
+.metric-card.purple::before{background:var(--ey-purple)}
+.metric-card.orange::before{background:var(--ey-orange)}
+.metric-label{font-size:11px;font-weight:600;color:var(--ey-gray-500);text-transform:uppercase;letter-spacing:0.5px}
+.metric-value{font-size:28px;font-weight:700;color:var(--ey-dark);margin:6px 0 2px;font-family:var(--font-mono)}
+.metric-sub{font-size:12px;color:var(--ey-gray-500)}
+
+/* ═══════════════════════════════════════════════════
+   WATERFALL CHART (CSS-based)
+   ═══════════════════════════════════════════════════ */
+.waterfall-chart{display:flex;align-items:flex-end;gap:2px;height:200px;padding:0 10px;margin:20px 0}
+.wf-bar{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;
+}
+.wf-bar-fill{
+  width:100%;max-width:60px;border-radius:4px 4px 0 0;transition:height 0.8s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.wf-bar-label{
+  font-size:10px;font-weight:600;text-align:center;margin-top:6px;color:var(--ey-gray-600);
+  max-width:80px;line-height:1.2;
+}
+.wf-bar-value{
+  font-size:11px;font-weight:700;text-align:center;margin-bottom:4px;
+  font-family:var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════════
+   SEVERITY BADGES
+   ═══════════════════════════════════════════════════ */
+.severity-critical{background:#FDEAED;color:var(--ey-red);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.severity-high{background:#FFF3E0;color:#E65100;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.severity-medium{background:var(--ey-yellow-soft);color:#8B7500;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.severity-low{background:#E8F5E9;color:var(--ey-green);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.severity-ok{background:var(--ey-gray-100);color:var(--ey-gray-500);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+
+/* ═══════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════ */
+.empty-state{
+  text-align:center;padding:48px 20px;color:var(--ey-gray-400);
+}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px;opacity:0.4}
+.empty-state h3{font-size:16px;color:var(--ey-gray-600);margin-bottom:4px}
+.empty-state p{font-size:13px}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════ */
+.toast{
+  position:fixed;bottom:24px;right:24px;background:var(--ey-dark);color:var(--ey-white);
+  padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;
+  box-shadow:var(--shadow-lg);z-index:999;transform:translateY(80px);opacity:0;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:3px solid var(--ey-green)}
+.toast.error{border-left:3px solid var(--ey-red)}
+
+/* ═══════════════════════════════════════════════════
+   OBJECTIVE BANNER
+   ═══════════════════════════════════════════════════ */
+.objective-banner{
+  background:linear-gradient(135deg, var(--ey-dark) 0%, var(--ey-gray-700) 100%);
+  color:var(--ey-white);padding:20px 24px;border-radius:var(--radius-lg);margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.objective-banner::after{
+  content:'';position:absolute;top:0;right:0;width:200px;height:100%;
+  background:linear-gradient(135deg, transparent, var(--ey-yellow) 20);opacity:0.3;
+}
+.objective-banner h3{font-size:14px;color:var(--ey-yellow);margin-bottom:6px;font-weight:700}
+.objective-banner p{font-size:13px;line-height:1.6;opacity:0.9;position:relative;z-index:1}
+
+/* ═══════════════════════════════════════════════════
+   PROGRESS
+   ═══════════════════════════════════════════════════ */
+.progress-bar{
+  height:4px;background:var(--ey-gray-200);border-radius:2px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:var(--ey-yellow);border-radius:2px;
+  transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ═══════════════════════════════════════════════════
+   LIBRARY PICKER (for initiatives/tech)
+   ═══════════════════════════════════════════════════ */
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;max-height:400px;overflow-y:auto;padding:4px}
+.lib-item{
+  display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--ey-gray-200);
+  border-radius:var(--radius);cursor:pointer;transition:var(--transition);
+}
+.lib-item:hover{background:var(--ey-gray-50);border-color:var(--ey-gray-300)}
+.lib-item.selected{background:var(--ey-yellow-dim);border-color:var(--ey-yellow)}
+.lib-item-check{
+  width:18px;height:18px;border:2px solid var(--ey-gray-300);border-radius:4px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.lib-item.selected .lib-item-check{background:var(--ey-yellow);border-color:var(--ey-yellow)}
+.lib-item.selected .lib-item-check::after{content:'✓';font-size:12px;font-weight:700}
+.lib-item-info h4{font-size:13px;font-weight:600;color:var(--ey-dark)}
+.lib-item-info p{font-size:11px;color:var(--ey-gray-500);margin-top:2px}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION FOOTER
+   ═══════════════════════════════════════════════════ */
+.page-nav{
+  display:flex;justify-content:space-between;margin-top:32px;padding-top:20px;
+  border-top:1px solid var(--ey-gray-200);
+}
+
+/* ═══════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.page{display:none;animation:fadeIn 0.3s ease}
+.page.active{display:block}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media(max-width:1024px){
+  .sidebar{width:220px}
+  .main-content{margin-left:220px;padding:20px}
+  .form-grid-3,.form-grid-4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main-content{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     TOP BAR
+     ═══════════════════════════════════════════════════ -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="ey-mark">EY</div>
+    <span>Contact Centre Transformation</span>
+  </div>
+  <div class="topbar-right">
+    <span class="badge">v7.0</span>
+    <button class="btn-export" onclick="exportExcel()">↓ Export Excel</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════════════ -->
+<div class="app-layout">
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Input</div>
+    <div class="nav-item active" data-page="enterprise" onclick="goPage('enterprise')">
+      <span class="nav-num">1</span> Enterprise Setup
+    </div>
+    <div class="nav-item" data-page="bus" onclick="goPage('bus')">
+      <span class="nav-num">2</span> Business Units
+    </div>
+    <div class="nav-item" data-page="queues" onclick="goPage('queues')">
+      <span class="nav-num">3</span> Queues
+    </div>
+    <div class="nav-item" data-page="kpis" onclick="goPage('kpis')">
+      <span class="nav-num">4</span> KPIs & Benchmarks
+    </div>
+    <div class="nav-item" data-page="auto" onclick="goPage('auto')">
+      <span class="nav-num">5</span> Automation & AI
+    </div>
+    <div class="nav-item" data-page="opmodel" onclick="goPage('opmodel')">
+      <span class="nav-num">6</span> Operating Model
+    </div>
+    <div class="nav-item" data-page="location" onclick="goPage('location')">
+      <span class="nav-num">7</span> Location Strategy
+    </div>
+    <div class="nav-item" data-page="tech" onclick="goPage('tech')">
+      <span class="nav-num">8</span> Technology & Investment
+    </div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Output</div>
+    <div class="nav-item" data-page="run" onclick="goPage('run')">
+      <span class="nav-icon">▶</span> Run Model
+    </div>
+    <div class="nav-item" data-page="impact" onclick="goPage('impact')">
+      <span class="nav-icon">◉</span> Initiative Impact
+    </div>
+    <div class="nav-item" data-page="dashboard" onclick="goPage('dashboard')">
+      <span class="nav-icon">■</span> Dashboard
+    </div>
+    <div class="nav-item" data-page="pools" onclick="goPage('pools')">
+      <span class="nav-icon">⊞</span> Pool Utilization
+    </div>
+    <div class="nav-item" data-page="roles" onclick="goPage('roles')">
+      <span class="nav-icon">◎</span> Role Breakdown
+    </div>
+    <div class="nav-item" data-page="risk" onclick="goPage('risk')">
+      <span class="nav-icon">⚠</span> Risk Register
+    </div>
+    <div class="nav-item" data-page="details" onclick="goPage('details')">
+      <span class="nav-icon">≡</span> Queue Details
+    </div>
+    <div class="nav-item" data-page="recs" onclick="goPage('recs')">
+      <span class="nav-icon">★</span> Recommendations
+    </div>
+    <div class="nav-item" data-page="validation" onclick="goPage('validation')">
+      <span class="nav-icon">✓</span> Validation
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN CONTENT AREA
+     ═══════════════════════════════════════════════════ -->
+<main class="main-content">
+
+<!-- ════════════════ PAGE 1: ENTERPRISE ════════════════ -->
+<div class="page active" id="page-enterprise">
+  <div class="objective-banner">
+    <h3>Tool Objective</h3>
+    <p>Model the financial and operational impact of contact centre transformation initiatives across automation, operating model, and location strategy levers — building an evidence-based business case for investment.</p>
+  </div>
+
+  <div class="page-header">
+    <div><h1>Enterprise Setup</h1><p>Define program parameters, location mix, salary rates, and planning horizon.</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Program Configuration</h3></div>
+    <div class="form-grid form-grid-3">
+      <div class="form-group"><label>Program Name</label><input id="ent-name" value="Contact Centre Transformation" onchange="saveEnterprise()"></div>
+      <div class="form-group"><label>Planning Horizon</label>
+        <select id="ent-horizon" onchange="saveEnterprise()">
+          <option value="1">1 Year</option>
+          <option value="3" selected>3 Years</option>
+          <option value="5">5 Years</option>
+          <option value="7">7 Years</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Volume Growth % (Annual)</label><input type="number" id="ent-growth" value="2" step="0.5" onchange="saveEnterprise()"></div>
+      <div class="form-group"><label>Wage Inflation % (Annual)</label><input type="number" id="ent-inflation" value="3" step="0.5" onchange="saveEnterprise()"></div>
+      <div class="form-group"><label>Discount Rate %</label><input type="number" id="ent-discount" value="10" step="1" onchange="saveEnterprise()"></div>
+      <div class="form-group"><label>Attrition Rate % (Monthly)</label><input type="number" id="ent-attrition" value="3" step="0.5" onchange="saveEnterprise()"></div>
+      <div class="form-group"><label>Redeployment %</label><input type="number" id="ent-redeploy" value="10" step="5" onchange="saveEnterprise()"></div>
+      <div class="form-group"><label>Currency</label>
+        <select id="ent-currency" onchange="saveEnterprise()">
+          <option value="USD">USD ($)</option><option value="GBP">GBP (£)</option><option value="EUR">EUR (€)</option><option value="INR">INR (₹)</option><option value="AUD">AUD (A$)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Total Enterprise FTE ★</label><input type="number" id="ent-fte" value="0" step="1" onchange="saveEnterprise()" style="border-color:var(--ey-yellow);font-weight:700"><div class="hint">Master FTE — BU totals must equal this</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Waterfall Calculation Order</h3><span class="tag tag-yellow">Drag to reorder · Toggle on/off</span></div>
+    <p style="color:var(--ey-gray-500);margin-bottom:12px;font-size:0.85rem">Each step feeds into the next. Drag to reorder, toggle to enable/disable.</p>
+    <div id="waterfall-order-list" style="display:flex;flex-direction:column;gap:8px;max-width:520px">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-header"><h3>Current Location Mix</h3></div>
+      <div id="loc-mix-validation" style="display:none;margin-bottom:8px"></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Location</th><th>FTE</th><th>%</th></tr></thead>
+        <tbody>
+          <tr><td>Onshore</td><td><input type="number" class="loc-fte" data-loc="onshore" style="width:80px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="calcLocPct()"></td><td class="loc-pct mono" data-loc="onshore">0%</td></tr>
+          <tr><td>Nearshore</td><td><input type="number" class="loc-fte" data-loc="nearshore" style="width:80px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="calcLocPct()"></td><td class="loc-pct mono" data-loc="nearshore">0%</td></tr>
+          <tr><td>Offshore</td><td><input type="number" class="loc-fte" data-loc="offshore" style="width:80px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="calcLocPct()"></td><td class="loc-pct mono" data-loc="offshore">0%</td></tr>
+          <tr><td>3rd Party</td><td><input type="number" class="loc-fte" data-loc="3rd_party" style="width:80px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="calcLocPct()"></td><td class="loc-pct mono" data-loc="3rd_party">0%</td></tr>
+          <tr class="matrix-total"><td>Total</td><td id="loc-total" class="mono">0</td><td id="loc-total-pct" class="mono">0%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Salary Rates by Location</h3></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Location</th><th>Avg Cost per FTE (Annual)</th></tr></thead>
+        <tbody>
+          <tr><td>Onshore</td><td><input type="number" id="sal-onshore" value="60000" style="width:120px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Nearshore</td><td><input type="number" id="sal-nearshore" value="30000" style="width:120px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Offshore</td><td><input type="number" id="sal-offshore" value="18000" style="width:120px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>3rd Party</td><td><input type="number" id="sal-3rdparty" value="45000" style="width:120px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>CX Revenue Impact</h3>
+        <span class="tag tag-blue">Optional — links CX improvements to revenue retention</span>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Customer Base</td><td><input type="number" id="cx-customer-base" value="0" style="width:140px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Revenue per Customer (Annual)</td><td><input type="number" id="cx-rev-per-cust" value="0" style="width:140px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Current Annual Churn Rate %</td><td><input type="number" id="cx-churn-rate" value="12" step="0.5" style="width:100px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>CSAT Baseline (1-5)</td><td><input type="number" id="cx-csat-baseline" value="3.5" step="0.1" min="1" max="5" style="width:100px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>CSAT Target (1-5)</td><td><input type="number" id="cx-csat-target" value="4.2" step="0.1" min="1" max="5" style="width:100px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>FCR Baseline %</td><td><input type="number" id="cx-fcr-baseline" value="70" step="1" style="width:100px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>FCR Target %</td><td><input type="number" id="cx-fcr-target" value="82" step="1" style="width:100px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Implementation Costs</h3>
+        <span class="tag tag-blue">One-time transformation investment (beyond technology)</span>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Cost Category</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Change Management</td><td><input type="number" id="impl-change-mgmt" value="0" style="width:140px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Training & Upskilling</td><td><input type="number" id="impl-training" value="0" style="width:140px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Integration & Migration</td><td><input type="number" id="impl-integration" value="0" style="width:140px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+          <tr><td>Contingency %</td><td><input type="number" id="impl-contingency" value="10" step="1" min="0" max="50" style="width:100px;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono)" onchange="saveEnterprise()"></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div></div>
+    <button class="btn btn-primary" onclick="goPage('bus')">Next: Business Units →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 2: BUSINESS UNITS ════════════════ -->
+<div class="page" id="page-bus">
+  <div class="page-header">
+    <div><h1>Business Units</h1><p>Define BUs with channels, processes, and the volume distribution matrix. Queues are auto-generated.</p></div>
+    <div class="actions"><button class="btn btn-primary" onclick="openBUModal()">+ Add Business Unit</button></div>
+  </div>
+
+  <div id="bu-list"></div>
+  <div id="bu-empty" class="empty-state"><div class="empty-icon">🏢</div><h3>No Business Units Yet</h3><p>Add your first business unit to define channels, processes and volumes.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('enterprise')">← Enterprise</button>
+    <button class="btn btn-primary" id="btn-next-queues" onclick="goPage('queues')">Next: Queues →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 3: QUEUES ════════════════ -->
+<div class="page" id="page-queues">
+  <div class="page-header">
+    <div><h1>Queues</h1><p>Auto-generated from BU volume matrix. Enrich with operational parameters — volume/channel changes happen at BU level.</p></div>
+  </div>
+  <div id="queue-tables"></div>
+  <div id="queue-empty" class="empty-state"><div class="empty-icon">📊</div><h3>No Queues Yet</h3><p>Queues are auto-generated when you add Business Units with volume data.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('bus')">← Business Units</button>
+    <button class="btn btn-primary" onclick="goPage('kpis')">Next: KPIs →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 4: KPIs & BENCHMARKS ════════════════ -->
+<div class="page" id="page-kpis">
+  <div class="page-header">
+    <div><h1>KPIs & Benchmarks</h1><p>Current state vs targets. Auto-populated from library based on your channels and processes.</p></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="autoPopulateKPIs()">⚡ Auto-Populate from Library</button>
+      <button class="btn btn-primary" onclick="openKPIModal()">+ Add Custom KPI</button>
+    </div>
+  </div>
+  <div id="kpi-table-wrap"></div>
+  <div id="kpi-empty" class="empty-state"><div class="empty-icon">📈</div><h3>No KPIs Defined</h3><p>Click "Auto-Populate from Library" to load benchmarks based on your BU configuration.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('queues')">← Queues</button>
+    <button class="btn btn-primary" onclick="goPage('auto')">Next: Automation & AI →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 5: AUTOMATION & AI ════════════════ -->
+<div class="page" id="page-auto">
+  <div class="page-header">
+    <div><h1>Automation & AI Initiatives</h1><p>Select from library or add custom initiatives. Maps levers to processes and channels.</p></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="openInitLibrary('auto')">📚 Library</button>
+      <button class="btn btn-primary" onclick="openInitModal('auto')">+ Custom Initiative</button>
+    </div>
+  </div>
+  <div class="init-grid" id="auto-init-grid"></div>
+  <div id="auto-empty" class="empty-state"><div class="empty-icon">🤖</div><h3>No Automation & AI Initiatives</h3><p>Add from the library or create custom initiatives.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('kpis')">← KPIs</button>
+    <button class="btn btn-primary" onclick="goPage('opmodel')">Next: Operating Model →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 6: OPERATING MODEL ════════════════ -->
+<div class="page" id="page-opmodel">
+  <div class="page-header">
+    <div><h1>Operating Model Initiatives</h1><p>Process, workforce, and operational improvements.</p></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="openInitLibrary('opmodel')">📚 Library</button>
+      <button class="btn btn-primary" onclick="openInitModal('opmodel')">+ Custom Initiative</button>
+    </div>
+  </div>
+  <div class="init-grid" id="opmodel-init-grid"></div>
+  <div id="opmodel-empty" class="empty-state"><div class="empty-icon">⚙️</div><h3>No Operating Model Initiatives</h3><p>Add from the library or create custom initiatives.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('auto')">← Automation & AI</button>
+    <button class="btn btn-primary" onclick="goPage('location')">Next: Location Strategy →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 7: LOCATION STRATEGY ════════════════ -->
+<div class="page" id="page-location">
+  <div class="page-header">
+    <div><h1>Location Strategy</h1><p>Movement plan — % of FTE to move between locations. Applied to post-reduction headcount (waterfall).</p></div>
+    <div class="actions"><button class="btn btn-primary" onclick="openLocModal()">+ Add Movement</button></div>
+  </div>
+  <div id="loc-table-wrap"></div>
+  <div id="loc-empty" class="empty-state"><div class="empty-icon">🌍</div><h3>No Location Movements</h3><p>Define where to shift FTE for cost optimization.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('opmodel')">← Operating Model</button>
+    <button class="btn btn-primary" onclick="goPage('tech')">Next: Technology →</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 8: TECHNOLOGY ════════════════ -->
+<div class="page" id="page-tech">
+  <div class="page-header">
+    <div><h1>Technology & Investment</h1><p>Full contact centre tech stack — one-time and recurring costs linked to initiatives.</p></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="openTechLibrary()">📚 Library</button>
+      <button class="btn btn-primary" onclick="openTechModal()">+ Custom Technology</button>
+    </div>
+  </div>
+  <div class="init-grid" id="tech-grid"></div>
+  <div id="tech-empty" class="empty-state"><div class="empty-icon">💻</div><h3>No Technology Items</h3><p>Add from the library or create custom technology investments.</p></div>
+  <div class="page-nav">
+    <button class="btn btn-secondary" onclick="goPage('location')">← Location Strategy</button>
+    <button class="btn btn-primary btn-run" onclick="goPage('run')">▶ Run Model</button>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 9: RUN MODEL ════════════════ -->
+<div class="page" id="page-run">
+  <div style="text-align:center;padding:60px 20px">
+    <h1 style="font-size:28px;margin-bottom:12px">Run Hybrid Pool Engine</h1>
+    <p style="color:var(--ey-gray-500);max-width:500px;margin:0 auto 32px">
+      Pool-based netting with stepped realization (90% → 75% → 60% → 45%). Auditable ceilings prevent double-counting. Yearly ramp with S-curve monthly interpolation.
+    </p>
+    <div id="run-status" style="margin-bottom:20px"></div>
+    <button class="btn btn-run" onclick="runModel()" id="run-btn" style="font-size:18px;padding:16px 48px">
+      ▶ Run Model
+    </button>
+    <div id="run-progress" style="max-width:400px;margin:20px auto;display:none">
+      <div class="progress-bar"><div class="progress-fill" id="run-progress-fill" style="width:0%"></div></div>
+      <p style="font-size:12px;color:var(--ey-gray-500);margin-top:8px" id="run-progress-text">Calculating...</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE 10: INITIATIVE IMPACT SUMMARY ════════════════ -->
+<div class="page" id="page-impact">
+  <div class="page-header">
+    <div><h1>Initiative Impact Summary</h1><p>Per-initiative contribution — grouped by waterfall layer.</p></div>
+  </div>
+  <div id="impact-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 11: DASHBOARD ════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="page-header">
+    <div><h1>Business Case Dashboard</h1><p>Summary of FTE, cost, savings, ROI, and payback across the planning horizon.</p></div>
+  </div>
+  <div id="dashboard-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 12: POOL UTILIZATION ════════════════ -->
+<div class="page" id="page-pools">
+  <div class="page-header">
+    <div><h1>Pool Utilization</h1><p>Auditable ceiling consumption per lever. Pools prevent double-counting by capping the maximum addressable opportunity.</p></div>
+  </div>
+  <div id="pools-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 13: ROLE BREAKDOWN ════════════════ -->
+<div class="page" id="page-roles">
+  <div class="page-header">
+    <div><h1>Role Breakdown</h1><p>FTE impact distributed across roles with reskilling paths and natural attrition timeline.</p></div>
+  </div>
+  <div id="roles-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 14: RISK REGISTER ════════════════ -->
+<div class="page" id="page-risk">
+  <div class="page-header">
+    <div><h1>Risk Register</h1><p>Auto-generated risks from initiative profiles with likelihood, impact, and mitigation strategies.</p></div>
+  </div>
+  <div id="risk-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 15: QUEUE DETAILS ════════════════ -->
+<div class="page" id="page-details">
+  <div class="page-header">
+    <div><h1>Queue-Level Details</h1><p>Current vs future state per queue through the waterfall.</p></div>
+  </div>
+  <div id="details-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 13: RECOMMENDATIONS ════════════════ -->
+<div class="page" id="page-recs">
+  <div class="page-header">
+    <div><h1>Recommendations</h1><p>Gap-driven suggestions based on KPI analysis.</p></div>
+  </div>
+  <div id="recs-content"></div>
+</div>
+
+<!-- ════════════════ PAGE 14: VALIDATION ════════════════ -->
+<div class="page" id="page-validation">
+  <div class="page-header">
+    <div><h1>Validation & Warnings</h1><p>Sanity checks on inputs and outputs.</p></div>
+  </div>
+  <div id="validation-content"></div>
+</div>
+
+</main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MODALS
+     ═══════════════════════════════════════════════════ -->
+
+<!-- BU MODAL -->
+<div class="modal-overlay" id="bu-modal">
+  <div class="modal" style="max-width:960px">
+    <div class="modal-header"><h2 id="bu-modal-title">Add Business Unit</h2><button class="modal-close" onclick="closeBUModal()">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid form-grid-3" style="margin-bottom:20px">
+        <div class="form-group"><label>BU Name</label><input id="bu-name" placeholder="e.g., North America Operations"></div>
+        <div class="form-group"><label>Cost per FTE (Annual)</label><input type="number" id="bu-cost" value="55000"></div>
+        <div class="form-group"><label>Paid Hours/FTE (Annual)</label><input type="number" id="bu-hours" value="1920"></div>
+        <div class="form-group"><label>Shrinkage %</label><input type="number" id="bu-shrink" value="30" step="1"></div>
+        <div class="form-group"><label>Occ. Voice %</label><input type="number" id="bu-occ-voice" value="82" step="1"></div>
+        <div class="form-group"><label>Occ. Chat %</label><input type="number" id="bu-occ-chat" value="78" step="1"></div>
+        <div class="form-group"><label>Current FTE</label><input type="number" id="bu-fte" value="0"></div>
+        <div class="form-group"><label>Growth Rate % (Annual)</label><input type="number" id="bu-growth" value="2" step="0.5"></div>
+        <div class="form-group"><label>Attrition Rate % (Monthly)</label><input type="number" id="bu-attrition" value="3" step="0.5"></div>
+      </div>
+
+      <div class="card" style="background:var(--ey-gray-50)">
+        <div class="card-header"><h3>Channels Operated</h3></div>
+        <div class="checkbox-group" id="bu-channels">
+          <!-- Populated dynamically from CHANNELS + custom_channels -->
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <input id="new-ch-name" placeholder="Add custom channel (e.g. whatsapp, social)" style="flex:1;padding:6px 10px;border:1px solid var(--ey-gray-200);border-radius:6px;font-size:0.85rem">
+          <button class="btn btn-ghost btn-sm" onclick="addCustomChannelInModal()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--ey-gray-50);margin-top:12px">
+        <div class="card-header"><h3>Process Types</h3></div>
+        <div class="checkbox-group" id="bu-processes">
+          <!-- Populated dynamically from PROCESSES + custom_processes -->
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <input id="new-proc-name" placeholder="Add custom process (e.g. complaints, escalations)" style="flex:1;padding:6px 10px;border:1px solid var(--ey-gray-200);border-radius:6px;font-size:0.85rem">
+          <button class="btn btn-ghost btn-sm" onclick="addCustomProcessInModal()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">
+          <h3>Channel × Process Volume Matrix</h3>
+          <div style="font-size:12px;color:var(--ey-gray-500)">
+            Total: <span id="matrix-total" class="mono" style="font-weight:700;color:var(--ey-dark)">0</span> contacts/month
+          </div>
+        </div>
+        <div class="table-wrap"><table class="matrix-table" id="volume-matrix"></table></div>
+        <div class="hint" style="margin-top:8px">Distribute total monthly contact volume across channel × process cells. Each non-zero cell auto-generates a queue.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeBUModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBU()" id="bu-save-btn">Save Business Unit</button>
+    </div>
+  </div>
+</div>
+
+<!-- KPI MODAL -->
+<div class="modal-overlay" id="kpi-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header"><h2>Add Custom KPI</h2><button class="modal-close" onclick="closeModal('kpi-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid form-grid-2">
+        <div class="form-group"><label>KPI Name</label><input id="kpi-name" placeholder="e.g., AHT"></div>
+        <div class="form-group"><label>Unit</label><select id="kpi-unit"><option>minutes</option><option>%</option><option>score</option><option>ratio</option><option>seconds</option></select></div>
+        <div class="form-group"><label>Current Value</label><input type="number" id="kpi-current" step="0.1"></div>
+        <div class="form-group"><label>Benchmark Value</label><input type="number" id="kpi-benchmark" step="0.1"></div>
+        <div class="form-group"><label>Impact Direction</label><select id="kpi-impact"><option value="decrease">Decrease</option><option value="increase">Increase</option><option value="maintain">Maintain</option></select></div>
+        <div class="form-group"><label>Enabled</label><div style="padding-top:4px"><label class="toggle"><input type="checkbox" id="kpi-enabled" checked><span class="toggle-slider"></span></label></div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('kpi-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveKPI()">Save KPI</button>
+    </div>
+  </div>
+</div>
+
+<!-- INITIATIVE MODAL -->
+<div class="modal-overlay" id="init-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><h2 id="init-modal-title">Add Custom Initiative</h2><button class="modal-close" onclick="closeModal('init-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid form-grid-2">
+        <div class="form-group"><label>Initiative Name</label><input id="init-name"></div>
+        <div class="form-group"><label>Lever</label>
+          <select id="init-lever">
+            <option value="deflection">Deflection</option><option value="aht_reduction">AHT Reduction</option>
+            <option value="acw_reduction">ACW Reduction</option><option value="repeat_reduction">Repeat Reduction</option>
+            <option value="concurrency_uplift">Concurrency Uplift</option><option value="shrinkage_reduction">Shrinkage Reduction</option>
+            <option value="occupancy_uplift">Occupancy Uplift</option><option value="schedule_efficiency">Schedule Efficiency</option>
+            <option value="channel_shift">Channel Shift</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Impact %</label><input type="number" id="init-impact" value="10" step="1"></div>
+        <div class="form-group"><label>Adoption %</label><input type="number" id="init-adoption" value="80" step="5"></div>
+        <div class="form-group"><label>Start (Month)</label><input type="number" id="init-start" value="1" min="1"></div>
+        <div class="form-group"><label>End (Month)</label><input type="number" id="init-end" value="12" min="1"></div>
+        <div class="form-group"><label>Wave</label><select id="init-wave"><option>1</option><option>2</option><option>3</option></select></div>
+        <div class="form-group"><label>Complexity</label><select id="init-complexity"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+      </div>
+      <div style="margin-top:14px;padding:14px;background:var(--ey-gray-50);border-radius:var(--radius-lg);border:1px solid var(--ey-gray-200)">
+        <div style="font-size:12px;font-weight:600;color:var(--ey-gray-600);margin-bottom:8px">📈 Yearly Ramp Targets <span style="font-weight:400;color:var(--ey-gray-400)">(S-curve interpolated monthly)</span></div>
+        <div class="form-grid form-grid-3">
+          <div class="form-group"><label>Year 1 Ramp %</label><input type="number" id="init-ramp1" value="40" min="0" max="100" step="5"><span class="hint">Typical: 30-50%</span></div>
+          <div class="form-group"><label>Year 2 Ramp %</label><input type="number" id="init-ramp2" value="80" min="0" max="100" step="5"><span class="hint">Typical: 70-85%</span></div>
+          <div class="form-group"><label>Year 3 Ramp %</label><input type="number" id="init-ramp3" value="100" min="0" max="100" step="5"><span class="hint">Typical: 90-100%</span></div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:12px"><label>Description</label><input id="init-desc"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('init-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInit()">Save Initiative</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY MODAL -->
+<div class="modal-overlay" id="lib-modal">
+  <div class="modal" style="max-width:900px">
+    <div class="modal-header"><h2 id="lib-modal-title">Initiative Library</h2><button class="modal-close" onclick="closeModal('lib-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="lib-grid" id="lib-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('lib-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addFromLibrary()">Add Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOCATION MODAL -->
+<div class="modal-overlay" id="loc-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><h2>Add Movement Plan</h2><button class="modal-close" onclick="closeModal('loc-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid form-grid-2">
+        <div class="form-group"><label>From</label><select id="loc-from"><option value="onshore">Onshore</option><option value="nearshore">Nearshore</option><option value="offshore">Offshore</option></select></div>
+        <div class="form-group"><label>To</label><select id="loc-to"><option value="nearshore">Nearshore</option><option value="offshore">Offshore</option><option value="onshore">Onshore</option></select></div>
+        <div class="form-group"><label>% to Move</label><input type="number" id="loc-pct" value="20" step="5" min="1" max="100"></div>
+        <div class="form-group"><label>Wave</label><select id="loc-wave"><option>1</option><option>2</option><option>3</option></select></div>
+        <div class="form-group"><label>Start (Month)</label><input type="number" id="loc-start" value="1" min="1"></div>
+        <div class="form-group"><label>End (Month)</label><input type="number" id="loc-end" value="12" min="1"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('loc-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLoc()">Save Movement</button>
+    </div>
+  </div>
+</div>
+
+<!-- TECH MODAL -->
+<div class="modal-overlay" id="tech-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><h2 id="tech-modal-title">Add Custom Technology</h2><button class="modal-close" onclick="closeModal('tech-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid form-grid-2">
+        <div class="form-group"><label>Technology Name</label><input id="tech-name"></div>
+        <div class="form-group"><label>Category</label>
+          <select id="tech-cat"><option value="telephony">Telephony</option><option value="ivr">IVR</option><option value="workforce">Workforce</option><option value="crm">CRM</option><option value="productivity">Productivity</option><option value="ai_automation">AI / Automation</option><option value="knowledge">Knowledge</option><option value="quality">Quality</option><option value="analytics">Analytics</option><option value="omnichannel">Omnichannel</option><option value="collaboration">Collaboration</option><option value="training">Training</option><option value="integration">Integration</option><option value="other">Other</option></select>
+        </div>
+        <div class="form-group"><label>Cost Type</label><select id="tech-cost-type"><option value="both">One-time + Recurring</option><option value="one_time">One-time Only</option><option value="recurring">Recurring Only</option></select></div>
+        <div class="form-group"><label>One-time Cost</label><input type="number" id="tech-onetime" value="0"></div>
+        <div class="form-group"><label>Recurring Cost/Month</label><input type="number" id="tech-recurring" value="0"></div>
+        <div class="form-group"><label>Start (Month)</label><input type="number" id="tech-start" value="1" min="1"></div>
+        <div class="form-group"><label>End (Month)</label><input type="number" id="tech-end" value="36" min="1"></div>
+        <div class="form-group"><label>Description</label><input id="tech-desc"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('tech-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTech()">Save Technology</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUEUE EDIT MODAL -->
+<div class="modal-overlay" id="queue-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><h2 id="queue-modal-title">Edit Queue</h2><button class="modal-close" onclick="closeModal('queue-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid form-grid-3" id="queue-edit-fields"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('queue-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveQueue()">Save Queue</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════ -->
+<script>
+const API = '';
+let _enterprise = null;
+let _bus = [];
+let _kpis = [];
+let _autoInits = [];
+let _opmodelInits = [];
+let _locMoves = [];
+let _techItems = [];
+let _chProc = {channels:[],processes:[],custom_channels:[],custom_processes:[]};
+let _procComplexityDefaults = {};
+let _poolTypes = [];
+let _steppedRealization = [];
+let _result = null;
+let _currentPage = 'enterprise';
+let _editBU = null;
+let _initType = 'auto';
+let _editQueue = {bid:null,qid:null};
+let _libType = '';
+let _libSelected = new Set();
+
+const SYM = {USD:'$',GBP:'£',EUR:'€',INR:'₹',AUD:'A$'};
+function fmt(n,d=0){if(n==null||isNaN(n))return'—';const s=_enterprise?.currency||'USD';return(SYM[s]||'$')+Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function fmtN(n,d=0){if(n==null||isNaN(n))return'—';return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function pct(n){return n==null?'—':(n*100).toFixed(1)+'%'}
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast show '+type;setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ═══ NAVIGATION ═══ */
+function goPage(id){
+  _currentPage=id;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active',n.dataset.page===id);
+  });
+  // Refresh page data
+  if(id==='bus')renderBUs();
+  if(id==='queues')renderQueues();
+  if(id==='kpis')renderKPIs();
+  if(id==='auto')renderInits('auto');
+  if(id==='opmodel')renderInits('opmodel');
+  if(id==='location')renderLocMoves();
+  if(id==='tech')renderTech();
+  if(id==='impact'&&_result)renderImpact();
+  if(id==='dashboard'&&_result)renderDashboard();
+  if(id==='pools'&&_result)renderPools();
+  if(id==='roles'&&_result)renderRoles();
+  if(id==='risk'&&_result)renderRisk();
+  if(id==='details'&&_result)renderDetails();
+  if(id==='recs'&&_result)renderRecs();
+  if(id==='validation'&&_result)renderValidation();
+  window.scrollTo(0,0);
+}
+
+/* ═══ INIT ═══ */
+async function init(){
+  const r=await fetch(API+'/api/enterprise');_enterprise=await r.json();
+  const rcp=await fetch(API+'/api/channels-processes');_chProc=await rcp.json();
+  loadEnterpriseUI();
+  const r2=await fetch(API+'/api/bus');_bus=await r2.json();
+  const r3=await fetch(API+'/api/kpis');_kpis=await r3.json();
+  const r4=await fetch(API+'/api/initiatives/auto');_autoInits=await r4.json();
+  const r5=await fetch(API+'/api/initiatives/opmodel');_opmodelInits=await r5.json();
+  const r6=await fetch(API+'/api/location-strategy');_locMoves=await r6.json();
+  const r7=await fetch(API+'/api/technology');_techItems=await r7.json();
+  // Load process complexity config
+  try{const rpc=await fetch(API+'/api/process-config');const pc=await rpc.json();
+    _procComplexityDefaults=pc.complexity_defaults||{};_poolTypes=pc.pool_types||[];_steppedRealization=pc.stepped_realization||[0.9,0.75,0.6,0.45];
+  }catch(e){console.warn('Process config not loaded',e)}
+}
+
+function loadEnterpriseUI(){
+  if(!_enterprise)return;
+  document.getElementById('ent-name').value=_enterprise.program_name||'';
+  document.getElementById('ent-horizon').value=_enterprise.planning_horizon_years||3;
+  document.getElementById('ent-growth').value=(_enterprise.global_volume_growth_pct||0.02)*100;
+  document.getElementById('ent-inflation').value=(_enterprise.global_wage_inflation_pct||0.03)*100;
+  document.getElementById('ent-discount').value=(_enterprise.discount_rate||0.10)*100;
+  document.getElementById('ent-attrition').value=(_enterprise.attrition_rate_monthly||0.03)*100;
+  document.getElementById('ent-redeploy').value=(_enterprise.redeployment_pct||0.10)*100;
+  document.getElementById('ent-currency').value=_enterprise.currency||'USD';
+  document.getElementById('ent-fte').value=_enterprise.enterprise_fte||0;
+  const lm=_enterprise.location_mix||{};
+  document.querySelectorAll('.loc-fte').forEach(inp=>{
+    const l=inp.dataset.loc;inp.value=lm[l]?.fte||0;
+  });
+  calcLocPct();
+  const sr=_enterprise.salary_rates||{};
+  document.getElementById('sal-onshore').value=sr.onshore||60000;
+  document.getElementById('sal-nearshore').value=sr.nearshore||30000;
+  document.getElementById('sal-offshore').value=sr.offshore||18000;
+  document.getElementById('sal-3rdparty').value=sr['3rd_party']||45000;
+  // CX Revenue
+  const cx=_enterprise.cx_revenue||{};
+  document.getElementById('cx-customer-base').value=cx.customer_base||0;
+  document.getElementById('cx-rev-per-cust').value=cx.revenue_per_customer||0;
+  document.getElementById('cx-churn-rate').value=(cx.annual_churn_rate_pct||0.12)*100;
+  document.getElementById('cx-csat-baseline').value=cx.csat_baseline||3.5;
+  document.getElementById('cx-csat-target').value=cx.csat_target||4.2;
+  document.getElementById('cx-fcr-baseline').value=(cx.fcr_baseline_pct||0.70)*100;
+  document.getElementById('cx-fcr-target').value=(cx.fcr_target_pct||0.82)*100;
+  // Implementation Costs
+  const impl=_enterprise.implementation_costs||{};
+  document.getElementById('impl-change-mgmt').value=impl.change_management||0;
+  document.getElementById('impl-training').value=impl.training||0;
+  document.getElementById('impl-integration').value=impl.integration||0;
+  document.getElementById('impl-contingency').value=(impl.contingency_pct||0.10)*100;
+  renderWaterfallOrder();
+}
+
+async function saveEnterprise(){
+  const lm={};
+  document.querySelectorAll('.loc-fte').forEach(inp=>{
+    const l=inp.dataset.loc;lm[l]={fte:Number(inp.value)||0,pct:0};
+  });
+  const total=Object.values(lm).reduce((s,v)=>s+v.fte,0);
+  Object.values(lm).forEach(v=>v.pct=total>0?v.fte/total:0);
+
+  const data={
+    program_name:document.getElementById('ent-name').value,
+    planning_horizon_years:Number(document.getElementById('ent-horizon').value),
+    global_volume_growth_pct:Number(document.getElementById('ent-growth').value)/100,
+    global_wage_inflation_pct:Number(document.getElementById('ent-inflation').value)/100,
+    discount_rate:Number(document.getElementById('ent-discount').value)/100,
+    attrition_rate_monthly:Number(document.getElementById('ent-attrition').value)/100,
+    redeployment_pct:Number(document.getElementById('ent-redeploy').value)/100,
+    currency:document.getElementById('ent-currency').value,
+    enterprise_fte:Number(document.getElementById('ent-fte').value)||0,
+    waterfall_order:_enterprise?.waterfall_order||['automation_ai','opmodel','location'],
+    waterfall_active:_enterprise?.waterfall_active||{automation_ai:true,opmodel:true,location:true},
+    location_mix:lm,
+    salary_rates:{
+      onshore:Number(document.getElementById('sal-onshore').value),
+      nearshore:Number(document.getElementById('sal-nearshore').value),
+      offshore:Number(document.getElementById('sal-offshore').value),
+      '3rd_party':Number(document.getElementById('sal-3rdparty').value),
+    },
+    cx_revenue:{
+      customer_base:Number(document.getElementById('cx-customer-base').value)||0,
+      revenue_per_customer:Number(document.getElementById('cx-rev-per-cust').value)||0,
+      annual_churn_rate_pct:Number(document.getElementById('cx-churn-rate').value)/100,
+      csat_baseline:Number(document.getElementById('cx-csat-baseline').value)||3.5,
+      csat_target:Number(document.getElementById('cx-csat-target').value)||4.2,
+      fcr_baseline_pct:Number(document.getElementById('cx-fcr-baseline').value)/100,
+      fcr_target_pct:Number(document.getElementById('cx-fcr-target').value)/100,
+    },
+    implementation_costs:{
+      change_management:Number(document.getElementById('impl-change-mgmt').value)||0,
+      training:Number(document.getElementById('impl-training').value)||0,
+      integration:Number(document.getElementById('impl-integration').value)||0,
+      contingency_pct:Number(document.getElementById('impl-contingency').value)/100,
+    },
+  };
+  await fetch(API+'/api/enterprise',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  _enterprise={..._enterprise,...data};
+}
+
+function calcLocPct(){
+  let total=0;
+  document.querySelectorAll('.loc-fte').forEach(inp=>total+=Number(inp.value)||0);
+  document.querySelectorAll('.loc-pct').forEach(td=>{
+    const l=td.dataset.loc;
+    const fte=Number(document.querySelector(`.loc-fte[data-loc="${l}"]`).value)||0;
+    td.textContent=total>0?((fte/total)*100).toFixed(1)+'%':'0%';
+  });
+  document.getElementById('loc-total').textContent=fmtN(total);
+  document.getElementById('loc-total-pct').textContent=total>0?'100%':'0%';
+  // FIX #3: Validate location mix matches enterprise FTE
+  const entFTE=Number(document.getElementById('ent-fte').value)||0;
+  const vEl=document.getElementById('loc-mix-validation');
+  if(entFTE>0 && total>0 && Math.abs(total-entFTE)>1){
+    vEl.style.display='block';
+    vEl.innerHTML=`<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:8px 12px;font-size:12px">⚠️ Location FTE (<b>${total}</b>) ≠ Enterprise FTE (<b>${entFTE}</b>) — gap of <span style="color:var(--ey-red);font-weight:600">${Math.abs(total-entFTE)}</span></div>`;
+  } else if(entFTE>0 && total>0 && Math.abs(total-entFTE)<=1){
+    vEl.style.display='block';
+    vEl.innerHTML=`<div style="background:#d4edda;border:1px solid #28a745;border-radius:6px;padding:8px 12px;font-size:12px">✅ Location mix matches Enterprise FTE (${entFTE})</div>`;
+  } else {
+    vEl.style.display='none';
+  }
+  saveEnterprise();
+}
+
+/* ═══ WATERFALL ORDER (drag-sort + toggle) ═══ */
+const WF_LABELS={automation_ai:'Automation & AI',opmodel:'Operating Model',location:'Location Strategy'};
+const WF_ICONS={automation_ai:'🤖',opmodel:'⚙️',location:'🌍'};
+const WF_DESCS={automation_ai:'Deflection, AHT reduction, channel shift',opmodel:'Shrinkage, occupancy, schedule efficiency',location:'Onshore/nearshore/offshore cost arbitrage'};
+
+function renderWaterfallOrder(){
+  const order=_enterprise?.waterfall_order||['automation_ai','opmodel','location'];
+  const active=_enterprise?.waterfall_active||{automation_ai:true,opmodel:true,location:true};
+  const wrap=document.getElementById('waterfall-order-list');
+  wrap.innerHTML=order.map((s,i)=>{
+    const isOn=active[s]!==false;
+    return `<div class="wf-step ${isOn?'':'wf-step-off'}" draggable="true" data-step="${s}" style="${isOn?'':'opacity:0.5;border-style:dashed'}">
+    <span class="wf-grip">⋮⋮</span>
+    <span class="wf-num">${i+1}</span>
+    <div style="flex:1"><div class="wf-label">${WF_ICONS[s]||''} ${WF_LABELS[s]||s}</div><div class="wf-desc">${WF_DESCS[s]||''}</div></div>
+    <label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;cursor:pointer" onclick="event.stopPropagation()">
+      <input type="checkbox" ${isOn?'checked':''} onchange="toggleWaterfallStep('${s}',this.checked)" style="opacity:0;width:0;height:0">
+      <span style="position:absolute;inset:0;background:${isOn?'var(--ey-yellow)':'#ccc'};border-radius:22px;transition:0.3s"></span>
+      <span style="position:absolute;height:18px;width:18px;left:${isOn?'20px':'2px'};bottom:2px;background:#fff;border-radius:50%;transition:0.3s"></span>
+    </label>
+  </div>`;
+  }).join('');
+
+  // Drag-and-drop
+  let dragEl=null;
+  wrap.querySelectorAll('.wf-step').forEach(el=>{
+    el.addEventListener('dragstart',e=>{dragEl=el;el.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
+    el.addEventListener('dragend',()=>{if(dragEl)dragEl.classList.remove('dragging');dragEl=null});
+    el.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';
+      const rect=el.getBoundingClientRect();
+      const mid=rect.top+rect.height/2;
+      if(e.clientY<mid)wrap.insertBefore(dragEl,el);
+      else wrap.insertBefore(dragEl,el.nextSibling);
+    });
+    el.addEventListener('drop',e=>{e.preventDefault();saveWaterfallOrder()});
+  });
+}
+
+function toggleWaterfallStep(step,isOn){
+  if(!_enterprise.waterfall_active)_enterprise.waterfall_active={};
+  _enterprise.waterfall_active[step]=isOn;
+  renderWaterfallOrder();
+  saveEnterprise();
+}
+
+function saveWaterfallOrder(){
+  const steps=Array.from(document.querySelectorAll('#waterfall-order-list .wf-step')).map(el=>el.dataset.step);
+  if(_enterprise)_enterprise.waterfall_order=steps;
+  renderWaterfallOrder();
+  saveEnterprise();
+}
+
+/* ═══ CHANNELS & PROCESSES MANAGEMENT ═══ */
+function renderChProcTags(){
+  const allCh=_chProc.channels||[];
+  const allProc=_chProc.processes||[];
+  const customCh=new Set(_chProc.custom_channels||[]);
+  const customProc=new Set(_chProc.custom_processes||[]);
+  document.getElementById('ch-tags').innerHTML=allCh.map(c=>{
+    const isCustom=customCh.has(c);
+    return `<span class="tag ${isCustom?'tag-yellow':'tag-blue'}">${c}${isCustom?` <span onclick="removeCustom('channel','${c}')" style="cursor:pointer;margin-left:4px">×</span>`:''}</span>`;
+  }).join('');
+  document.getElementById('proc-tags').innerHTML=allProc.map(p=>{
+    const isCustom=customProc.has(p);
+    const label=p.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    return `<span class="tag ${isCustom?'tag-yellow':'tag-gray'}">${label}${isCustom?` <span onclick="removeCustom('process','${p}')" style="cursor:pointer;margin-left:4px">×</span>`:''}</span>`;
+  }).join('');
+}
+
+async function addCustomChannelInModal(){
+  const inp=document.getElementById('new-ch-name');
+  const name=inp.value.trim();if(!name)return;
+  const r=await fetch(API+'/api/channels-processes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'channel',name})});
+  const res=await r.json();
+  if(res.ok){
+    inp.value='';
+    const rcp=await fetch(API+'/api/channels-processes');_chProc=await rcp.json();
+    // Get currently selected channels, add the new one as selected
+    const selectedCh=getSelectedChannels();selectedCh.push(res.added);
+    const selectedProc=getSelectedProcesses();
+    populateBUModalCheckboxes(selectedCh,selectedProc);
+    updateVolumeMatrix();
+    toast('Channel added: '+name);
+  } else {toast(res.error||'Already exists','error')}
+}
+
+async function addCustomProcessInModal(){
+  const inp=document.getElementById('new-proc-name');
+  const name=inp.value.trim();if(!name)return;
+  const r=await fetch(API+'/api/channels-processes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'process',name})});
+  const res=await r.json();
+  if(res.ok){
+    inp.value='';
+    const rcp=await fetch(API+'/api/channels-processes');_chProc=await rcp.json();
+    // Get currently selected processes, add the new one as selected
+    const selectedCh=getSelectedChannels();
+    const selectedProc=getSelectedProcesses();selectedProc.push(res.added);
+    populateBUModalCheckboxes(selectedCh,selectedProc);
+    updateVolumeMatrix();
+    toast('Process added: '+name);
+  } else {toast(res.error||'Already exists','error')}
+}
+
+async function removeCustom(type,name){
+  // Remove from enterprise custom list
+  if(type==='channel'){
+    _enterprise.custom_channels=(_enterprise.custom_channels||[]).filter(c=>c!==name);
+  } else {
+    _enterprise.custom_processes=(_enterprise.custom_processes||[]).filter(p=>p!==name);
+  }
+  await fetch(API+'/api/enterprise',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    custom_channels:_enterprise.custom_channels||[],
+    custom_processes:_enterprise.custom_processes||[]
+  })});
+  const rcp=await fetch(API+'/api/channels-processes');_chProc=await rcp.json();
+  renderChProcTags();toast(type+' removed');
+}
+
+function populateBUModalCheckboxes(selectedCh,selectedProc){
+  const allCh=_chProc.channels||['voice','chat','email','portal'];
+  const allProc=_chProc.processes||['orders','warranty','billing','parts','technical_support','dispatch','returns'];
+  const chIcons={voice:'📞',chat:'💬',email:'📧',portal:'🌐'};
+
+  document.getElementById('bu-channels').innerHTML=allCh.map(c=>{
+    const checked=selectedCh?selectedCh.includes(c):['voice','chat','email'].includes(c);
+    return `<label class="checkbox-item${checked?' selected':''}" onclick="toggleCheck(this)"><input type="checkbox" value="${c}"${checked?' checked':''}>${chIcons[c]||'📋'} ${c.charAt(0).toUpperCase()+c.slice(1)}</label>`;
+  }).join('');
+
+  document.getElementById('bu-processes').innerHTML=allProc.map(p=>{
+    const checked=selectedProc?selectedProc.includes(p):['orders','warranty','billing'].includes(p);
+    const label=p.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    return `<label class="checkbox-item${checked?' selected':''}" onclick="toggleCheck(this)"><input type="checkbox" value="${p}"${checked?' checked':''}>${label}</label>`;
+  }).join('');
+}
+
+/* ═══ CHECKBOX TOGGLE ═══ */
+function toggleCheck(el){
+  const cb=el.querySelector('input');cb.checked=!cb.checked;
+  el.classList.toggle('selected',cb.checked);
+  updateVolumeMatrix();
+}
+
+/* ═══ BUSINESS UNITS ═══ */
+function openBUModal(bu){
+  _editBU=bu||null;
+  document.getElementById('bu-modal-title').textContent=bu?'Edit Business Unit':'Add Business Unit';
+  document.getElementById('bu-save-btn').textContent=bu?'Update':'Save Business Unit';
+  if(bu){
+    document.getElementById('bu-name').value=bu.bu_name;
+    document.getElementById('bu-cost').value=bu.cost_per_fte;
+    document.getElementById('bu-hours').value=bu.paid_hours_per_fte;
+    document.getElementById('bu-shrink').value=(bu.shrinkage_pct||0.30)*100;
+    document.getElementById('bu-occ-voice').value=(bu.occupancy_voice||0.82)*100;
+    document.getElementById('bu-occ-chat').value=(bu.occupancy_chat||0.78)*100;
+    document.getElementById('bu-fte').value=bu.current_fte||0;
+    document.getElementById('bu-growth').value=(bu.bu_growth_rate||0.02)*100;
+    document.getElementById('bu-attrition').value=(bu.bu_attrition_rate||0.03)*100;
+    populateBUModalCheckboxes(bu.channels, bu.processes);
+  } else {
+    document.getElementById('bu-name').value='';
+    document.getElementById('bu-cost').value=55000;
+    document.getElementById('bu-hours').value=1920;
+    document.getElementById('bu-shrink').value=30;
+    document.getElementById('bu-occ-voice').value=82;
+    document.getElementById('bu-occ-chat').value=78;
+    document.getElementById('bu-fte').value=0;
+    document.getElementById('bu-growth').value=2;
+    document.getElementById('bu-attrition').value=3;
+    populateBUModalCheckboxes(null, null);
+  }
+  updateVolumeMatrix();
+  document.getElementById('bu-modal').classList.add('open');
+}
+
+function closeBUModal(){document.getElementById('bu-modal').classList.remove('open');_editBU=null}
+
+function getSelectedChannels(){
+  return Array.from(document.querySelectorAll('#bu-channels input:checked')).map(i=>i.value);
+}
+function getSelectedProcesses(){
+  return Array.from(document.querySelectorAll('#bu-processes input:checked')).map(i=>i.value);
+}
+
+function updateVolumeMatrix(){
+  const channels=getSelectedChannels();
+  const processes=getSelectedProcesses();
+  const table=document.getElementById('volume-matrix');
+  if(!channels.length||!processes.length){
+    table.innerHTML='<tbody><tr><td style="padding:20px;text-align:center;color:var(--ey-gray-400)">Select channels and processes above</td></tr></tbody>';
+    return;
+  }
+  const existing=_editBU?.volume_matrix||{};
+  let html='<thead><tr><th>Process</th>';
+  channels.forEach(ch=>html+=`<th>${ch.charAt(0).toUpperCase()+ch.slice(1)}</th>`);
+  html+='<th>Row Total</th></tr></thead><tbody>';
+  processes.forEach(p=>{
+    html+=`<tr><td style="font-weight:600">${p.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</td>`;
+    channels.forEach(ch=>{
+      const val=existing[p]?.[ch]||'';
+      html+=`<td><input type="number" class="matrix-cell" data-process="${p}" data-channel="${ch}" value="${val}" min="0" oninput="calcMatrixTotals()"></td>`;
+    });
+    html+=`<td class="matrix-total row-total" data-process="${p}">0</td></tr>`;
+  });
+  html+=`<tr class="matrix-total"><td style="font-weight:700">Column Total</td>`;
+  channels.forEach(ch=>html+=`<td class="matrix-total col-total" data-channel="${ch}">0</td>`);
+  html+=`<td class="matrix-total" id="matrix-grand-total">0</td></tr>`;
+  html+='</tbody>';
+  table.innerHTML=html;
+  calcMatrixTotals();
+}
+
+function calcMatrixTotals(){
+  const cells=document.querySelectorAll('.matrix-cell');
+  const rowTotals={};const colTotals={};let grand=0;
+  cells.forEach(c=>{
+    const v=Number(c.value)||0;
+    const p=c.dataset.process;const ch=c.dataset.channel;
+    rowTotals[p]=(rowTotals[p]||0)+v;
+    colTotals[ch]=(colTotals[ch]||0)+v;
+    grand+=v;
+  });
+  document.querySelectorAll('.row-total').forEach(t=>t.textContent=fmtN(rowTotals[t.dataset.process]||0));
+  document.querySelectorAll('.col-total').forEach(t=>t.textContent=fmtN(colTotals[t.dataset.channel]||0));
+  const gt=document.getElementById('matrix-grand-total');if(gt)gt.textContent=fmtN(grand);
+  const mt=document.getElementById('matrix-total');if(mt)mt.textContent=fmtN(grand);
+}
+
+function getVolumeMatrix(){
+  const matrix={};
+  document.querySelectorAll('.matrix-cell').forEach(c=>{
+    const p=c.dataset.process;const ch=c.dataset.channel;const v=Number(c.value)||0;
+    if(!matrix[p])matrix[p]={};
+    matrix[p][ch]=v;
+  });
+  return matrix;
+}
+
+async function saveBU(){
+  const data={
+    bu_name:document.getElementById('bu-name').value||'New BU',
+    cost_per_fte:Number(document.getElementById('bu-cost').value),
+    paid_hours_per_fte:Number(document.getElementById('bu-hours').value),
+    shrinkage_pct:Number(document.getElementById('bu-shrink').value)/100,
+    occupancy_voice:Number(document.getElementById('bu-occ-voice').value)/100,
+    occupancy_chat:Number(document.getElementById('bu-occ-chat').value)/100,
+    current_fte:Number(document.getElementById('bu-fte').value),
+    bu_growth_rate:Number(document.getElementById('bu-growth').value)/100,
+    bu_attrition_rate:Number(document.getElementById('bu-attrition').value)/100,
+    channels:getSelectedChannels(),
+    processes:getSelectedProcesses(),
+    volume_matrix:getVolumeMatrix(),
+  };
+  if(_editBU){
+    const r=await fetch(API+`/api/bus/${_editBU.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const bu=await r.json();
+    _bus=_bus.map(b=>b.id===bu.id?bu:b);
+    toast('Business Unit updated');
+  } else {
+    const r=await fetch(API+'/api/bus',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const bu=await r.json();
+    _bus.push(bu);
+    toast('Business Unit added');
+  }
+  closeBUModal();renderBUs();
+}
+
+async function deleteBU(id){
+  if(!confirm('Delete this Business Unit and all its queues?'))return;
+  await fetch(API+`/api/bus/${id}`,{method:'DELETE'});
+  _bus=_bus.filter(b=>b.id!==id);renderBUs();toast('Business Unit deleted');
+}
+
+function renderBUs(){
+  const wrap=document.getElementById('bu-list');
+  const empty=document.getElementById('bu-empty');
+  if(!_bus.length){wrap.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  // FTE validation
+  const entFTE=_enterprise.enterprise_fte||0;
+  const buFTE=_bus.reduce((s,b)=>s+(b.current_fte||0),0);
+  let banner='';
+  if(entFTE>0 && Math.abs(entFTE-buFTE)>1){
+    banner=`<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:1.2rem">⚠️</span>
+      <span>Enterprise FTE: <b>${entFTE}</b> | BU Total: <b>${buFTE}</b> — <span style="color:var(--ey-red);font-weight:600">Gap of ${Math.abs(entFTE-buFTE)} FTE</span>. BU totals must match enterprise master.</span>
+    </div>`;
+  } else if(entFTE>0 && Math.abs(entFTE-buFTE)<=1){
+    banner=`<div style="background:#d4edda;border:1px solid #28a745;border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:1.2rem">✅</span>
+      <span>Enterprise FTE: <b>${entFTE}</b> | BU Total: <b>${buFTE}</b> — Matched</span>
+    </div>`;
+  }
+  wrap.innerHTML=banner+_bus.map(bu=>{
+    const qCount=bu.queues?.length||0;
+    const totalVol=bu.queues?.reduce((s,q)=>s+(q.monthly_volume||0),0)||0;
+    return `<div class="card" style="animation:slideUp 0.3s ease">
+      <div class="card-header">
+        <div><h3>${bu.bu_name}</h3>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <span class="tag tag-blue">${qCount} queues</span>
+            <span class="tag tag-yellow">${fmtN(totalVol)} contacts/mo</span>
+            <span class="tag tag-green">${bu.current_fte||0} FTE</span>
+            <span class="tag tag-gray">${fmt(bu.cost_per_fte)}/FTE</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick='openBUModal(${JSON.stringify(bu).replace(/'/g,"&#39;")})'>✏️ Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="deleteBU('${bu.id}')" style="color:var(--ey-red)">🗑</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${(bu.channels||[]).map(c=>`<span class="tag tag-blue">${c}</span>`).join('')}
+        ${(bu.processes||[]).map(p=>`<span class="tag tag-gray">${p.replace('_',' ')}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  // FIX #1: Disable Next button if FTE mismatch
+  const nextBtn=document.getElementById('btn-next-queues');
+  if(nextBtn){
+    const blocked=entFTE>0 && _bus.length>0 && Math.abs(entFTE-buFTE)>1;
+    nextBtn.disabled=blocked;
+    nextBtn.title=blocked?'BU FTE total must match Enterprise FTE before proceeding':'';
+    nextBtn.style.opacity=blocked?'0.5':'1';
+  }
+}
+
+/* ═══ QUEUES ═══ */
+function renderQueues(){
+  const wrap=document.getElementById('queue-tables');
+  const empty=document.getElementById('queue-empty');
+  const allQueues=_bus.flatMap(bu=>(bu.queues||[]).map(q=>({...q,buName:bu.bu_name,buId:bu.id})));
+  if(!allQueues.length){wrap.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  // Group by BU
+  const grouped={};
+  allQueues.forEach(q=>{if(!grouped[q.buName])grouped[q.buName]=[];grouped[q.buName].push(q)});
+  wrap.innerHTML=Object.entries(grouped).map(([buName,queues])=>`
+    <div class="card">
+      <div class="card-header"><h3>${buName}</h3><span class="tag tag-blue">${queues.length} queues</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Queue</th><th>Channel</th><th>Process</th><th>Complexity</th><th>Volume/Mo</th><th>AHT</th><th>ACW</th><th>Concurrency</th><th>Shrinkage</th><th>Occupancy</th><th>FCR</th><th></th></tr></thead>
+        <tbody>${queues.map(q=>{
+          const pc=q.process_complexity??_procComplexityDefaults[q.process_tag]??0.35;
+          const band=pc<=0.3?'simple':pc<=0.6?'medium':'complex';
+          const bColor={simple:'tag-green',medium:'tag-yellow',complex:'tag-red'}[band];
+          return `<tr>
+          <td style="font-weight:600">${q.queue_name}</td>
+          <td><span class="tag tag-blue">${q.channel}</span></td>
+          <td>${q.process_tag?.replace('_',' ')}</td>
+          <td><span class="tag ${bColor}" title="Process complexity: ${pc.toFixed(2)} (${band})">${band} ${(pc*100).toFixed(0)}%</span></td>
+          <td class="mono">${fmtN(q.monthly_volume)}</td>
+          <td class="mono">${q.handle_time_minutes}m</td>
+          <td class="mono">${q.after_call_work_minutes}m</td>
+          <td class="mono">${q.chat_concurrency}</td>
+          <td class="mono">${pct(q.shrinkage_pct)}</td>
+          <td class="mono">${pct(q.occupancy_target)}</td>
+          <td class="mono">${pct(q.fcr_pct)}</td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openQueueEdit('${q.buId}','${q.id}')">✏️</button></td>
+        </tr>`}).join('')}</tbody>
+      </table></div>
+    </div>
+  `).join('');
+}
+
+function openQueueEdit(bid,qid){
+  const bu=_bus.find(b=>b.id===bid);if(!bu)return;
+  const q=bu.queues?.find(q=>q.id===qid);if(!q)return;
+  _editQueue={bid,qid};
+  document.getElementById('queue-modal-title').textContent='Edit: '+q.queue_name;
+  const fields=[
+    {key:'handle_time_minutes',label:'AHT (min)',val:q.handle_time_minutes},
+    {key:'after_call_work_minutes',label:'ACW (min)',val:q.after_call_work_minutes},
+    {key:'chat_concurrency',label:'Concurrency',val:q.chat_concurrency},
+    {key:'shrinkage_pct',label:'Shrinkage %',val:(q.shrinkage_pct*100).toFixed(1),isPct:true},
+    {key:'occupancy_target',label:'Occupancy %',val:(q.occupancy_target*100).toFixed(1),isPct:true},
+    {key:'schedule_efficiency',label:'Schedule Eff. %',val:(q.schedule_efficiency*100).toFixed(1),isPct:true},
+    {key:'sla_target',label:'SLA Target %',val:(q.sla_target*100).toFixed(1),isPct:true},
+    {key:'sla_threshold_seconds',label:'SLA Threshold (sec)',val:q.sla_threshold_seconds},
+    {key:'repeat_contact_pct',label:'Repeat %',val:(q.repeat_contact_pct*100).toFixed(1),isPct:true},
+    {key:'transfer_pct',label:'Transfer %',val:(q.transfer_pct*100).toFixed(1),isPct:true},
+    {key:'fcr_pct',label:'FCR %',val:(q.fcr_pct*100).toFixed(1),isPct:true},
+  ];
+  // Process complexity: user override or default from lookup
+  const pcDefault=_procComplexityDefaults[q.process_tag]??0.35;
+  const pcVal=q.process_complexity??pcDefault;
+  const pcBand=pcVal<=0.3?'Simple':pcVal<=0.6?'Medium':'Complex';
+  document.getElementById('queue-edit-fields').innerHTML=fields.map(f=>
+    `<div class="form-group"><label>${f.label}</label><input type="number" class="q-field" data-key="${f.key}" data-pct="${f.isPct||false}" value="${f.val}" step="0.1"></div>`
+  ).join('')+`
+  <div class="form-group" style="grid-column:1/-1;border-top:1px solid var(--ey-gray-200);padding-top:12px;margin-top:8px">
+    <label style="display:flex;align-items:center;gap:8px">
+      Process Complexity
+      <span class="tag ${pcVal<=0.3?'tag-green':pcVal<=0.6?'tag-yellow':'tag-red'}" id="pc-band-tag">${pcBand} (${(pcVal*100).toFixed(0)}%)</span>
+      <span style="cursor:help;font-size:11px;color:var(--ey-gray-500)" title="Affects initiative impact: Raw = Impact% × Adoption × (1 − Complexity×0.3). Higher complexity = lower deflection eligibility, lower containment, smaller pool ceilings. Stepped realization: 90%→75%→60%→45% per successive initiative on same lever.">ⓘ How it works</span>
+    </label>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+      <input type="range" id="pc-slider" class="q-field" data-key="process_complexity" data-pct="false" min="0" max="100" step="1" value="${(pcVal*100).toFixed(0)}"
+        oninput="updatePCBand(this.value)" style="flex:1">
+      <span class="mono" id="pc-value" style="min-width:40px;text-align:right">${(pcVal*100).toFixed(0)}%</span>
+    </div>
+    <div style="font-size:11px;color:var(--ey-gray-500);margin-top:4px">Default for <em>${(q.process_tag||'general').replace(/_/g,' ')}</em>: ${(pcDefault*100).toFixed(0)}% · 
+      <a href="#" onclick="document.getElementById('pc-slider').value=${(pcDefault*100).toFixed(0)};updatePCBand(${(pcDefault*100).toFixed(0)});return false" style="color:var(--ey-blue)">Reset to default</a>
+    </div>
+    <div id="pc-caps-info" style="margin-top:8px;font-size:11px;background:var(--ey-gray-50);padding:8px 10px;border-radius:var(--radius);display:none"></div>
+    <a href="#" onclick="togglePCCaps();return false" style="font-size:11px;color:var(--ey-blue);margin-top:4px;display:inline-block">Show lever caps for this band ▾</a>
+  </div>`;
+  document.getElementById('queue-modal').classList.add('open');
+}
+
+async function saveQueue(){
+  const data={};
+  document.querySelectorAll('.q-field').forEach(inp=>{
+    const k=inp.dataset.key;let v=Number(inp.value);
+    if(inp.dataset.pct==='true')v=v/100;
+    if(k==='process_complexity')v=v/100; // slider is 0-100
+    data[k]=v;
+  });
+
+function updatePCBand(val){
+  const pc=Number(val)/100;
+  const band=pc<=0.3?'Simple':pc<=0.6?'Medium':'Complex';
+  const color=pc<=0.3?'tag-green':pc<=0.6?'tag-yellow':'tag-red';
+  const tag=document.getElementById('pc-band-tag');
+  if(tag){tag.className='tag '+color;tag.textContent=`${band} (${val}%)`}
+  const valEl=document.getElementById('pc-value');if(valEl)valEl.textContent=val+'%';
+  // Update caps display if open
+  const capsEl=document.getElementById('pc-caps-info');
+  if(capsEl&&capsEl.style.display!=='none')_showPCCaps(pc);
+}
+function togglePCCaps(){
+  const el=document.getElementById('pc-caps-info');
+  if(el.style.display==='none'){
+    const pc=Number(document.getElementById('pc-slider')?.value||35)/100;
+    _showPCCaps(pc);el.style.display='';
+  }else{el.style.display='none'}
+}
+function _showPCCaps(pc){
+  const band=pc<=0.3?'simple':pc<=0.6?'medium':'complex';
+  const leverNames={deflection:'Deflection',repeat_reduction:'Repeat Reduction',channel_shift:'Channel Shift',
+    aht_reduction:'AHT Reduction',acw_reduction:'ACW Reduction',concurrency_uplift:'Concurrency Uplift',
+    shrinkage_reduction:'Shrinkage Reduction',occupancy_uplift:'Occupancy Uplift',schedule_efficiency:'Schedule Efficiency'};
+  const eligibility={simple:{deflection:0.35,containment:0.80},medium:{deflection:0.20,containment:0.55},complex:{deflection:0.08,containment:0.25}};
+  const e=eligibility[band]||eligibility.medium;
+  let html=`<div style="font-weight:600;margin-bottom:4px">Pool parameters for <em>${band}</em> band:</div>`;
+  html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">`;
+  html+=`<div>Deflection Eligible: <strong>${(e.deflection*100).toFixed(0)}%</strong></div>`;
+  html+=`<div>Containment Feasibility: <strong>${(e.containment*100).toFixed(0)}%</strong></div>`;
+  html+=`<div>Complexity Discount: <strong>${(pc*30).toFixed(0)}%</strong></div>`;
+  html+=`<div>Repeat Reducible: <strong>70%</strong> of repeats</div>`;
+  html+=`</div>`;
+  html+=`<div style="margin-top:6px;font-weight:600">Stepped Realization (per successive initiative on same lever):</div>`;
+  html+=`<div style="display:flex;gap:8px;margin-top:2px">${_steppedRealization.map((r,i)=>`<span class="tag tag-${r>=0.7?'green':r>=0.5?'yellow':'gray'}">#${i+1}: ${(r*100).toFixed(0)}%</span>`).join('')}</div>`;
+  html+=`<div style="margin-top:6px;font-style:italic">Formula: Effective = Raw Impact × Realization Step × Pool Remaining (hard cap)</div>`;
+  document.getElementById('pc-caps-info').innerHTML=html;
+}
+  await fetch(API+`/api/bus/${_editQueue.bid}/queues/${_editQueue.qid}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  // Update local
+  const bu=_bus.find(b=>b.id===_editQueue.bid);
+  if(bu){const q=bu.queues.find(q=>q.id===_editQueue.qid);if(q)Object.assign(q,data)}
+  closeModal('queue-modal');renderQueues();toast('Queue updated');
+}
+
+/* ═══ KPIs ═══ */
+async function autoPopulateKPIs(){
+  const r=await fetch(API+'/api/kpis/auto-populate',{method:'POST',headers:{'Content-Type':'application/json'}});
+  const d=await r.json();
+  const r2=await fetch(API+'/api/kpis');_kpis=await r2.json();
+  renderKPIs();toast(`${d.added} KPIs added (${d.total} total)`);
+}
+
+function openKPIModal(){
+  document.getElementById('kpi-name').value='';
+  document.getElementById('kpi-current').value='';
+  document.getElementById('kpi-benchmark').value='';
+  document.getElementById('kpi-modal').classList.add('open');
+}
+
+async function saveKPI(){
+  const data={
+    name:document.getElementById('kpi-name').value,
+    unit:document.getElementById('kpi-unit').value,
+    current_value:Number(document.getElementById('kpi-current').value)||0,
+    benchmark_value:Number(document.getElementById('kpi-benchmark').value)||0,
+    impact:document.getElementById('kpi-impact').value,
+    enabled:document.getElementById('kpi-enabled').checked,
+  };
+  const r=await fetch(API+'/api/kpis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  _kpis.push(await r.json());
+  closeModal('kpi-modal');renderKPIs();toast('KPI added');
+}
+
+async function deleteKPI(id){
+  await fetch(API+`/api/kpis/${id}`,{method:'DELETE'});
+  _kpis=_kpis.filter(k=>k.id!==id);renderKPIs();
+}
+
+async function updateKPIField(id,field,value){
+  const kpi=_kpis.find(k=>k.id===id);if(!kpi)return;
+  if(field==='enabled')kpi[field]=value;
+  else kpi[field]=Number(value);
+  await fetch(API+`/api/kpis/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(kpi)});
+}
+
+function renderKPIs(){
+  const wrap=document.getElementById('kpi-table-wrap');
+  const empty=document.getElementById('kpi-empty');
+  if(!_kpis.length){wrap.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  // Group by category
+  const cats={channel:'Channel KPIs',workforce:'Workforce KPIs',self_service:'Self-Service KPIs',industrial:'Industrial Process KPIs',ai_maturity:'AI Maturity KPIs',custom:'Custom KPIs'};
+  const grouped={};
+  _kpis.forEach(k=>{const c=k.category||'custom';if(!grouped[c])grouped[c]=[];grouped[c].push(k)});
+  wrap.innerHTML=Object.entries(grouped).map(([cat,kpis])=>`
+    <div class="card"><div class="card-header"><h3>${cats[cat]||cat}</h3><span class="tag tag-gray">${kpis.length}</span></div>
+    <div class="table-wrap"><table><thead><tr><th>KPI</th><th>Unit</th><th>Channels</th><th>Current</th><th>Benchmark</th><th>Impact</th><th>Enabled</th><th></th></tr></thead>
+    <tbody>${kpis.map(k=>`<tr>
+      <td style="font-weight:600">${k.name}</td><td>${k.unit}</td>
+      <td>${(k.channels||[]).join(', ')}</td>
+      <td><input type="number" value="${k.current_value||''}" style="width:70px;padding:3px 6px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono);font-size:12px" onchange="updateKPIField('${k.id}','current_value',this.value)"></td>
+      <td><input type="number" value="${k.benchmark_value||''}" style="width:70px;padding:3px 6px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono);font-size:12px" onchange="updateKPIField('${k.id}','benchmark_value',this.value)"></td>
+      <td><span class="tag ${k.impact==='decrease'?'tag-green':k.impact==='increase'?'tag-blue':'tag-gray'}">${k.impact}</span></td>
+      <td><label class="toggle"><input type="checkbox" ${k.enabled?'checked':''} onchange="updateKPIField('${k.id}','enabled',this.checked)"><span class="toggle-slider"></span></label></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="deleteKPI('${k.id}')" style="color:var(--ey-red)">×</button></td>
+    </tr>`).join('')}</tbody></table></div></div>
+  `).join('');
+}
+
+/* ═══ INITIATIVES ═══ */
+function openInitLibrary(type){
+  _libType=type;_libSelected=new Set();
+  const title=type==='auto'?'Automation & AI Library':'Operating Model Library';
+  document.getElementById('lib-modal-title').textContent=title;
+  fetch(API+`/api/initiative-library/${type}`).then(r=>r.json()).then(lib=>{
+    document.getElementById('lib-grid').innerHTML=lib.map((item,i)=>{
+      const levers=item.levers||[];
+      const leverStr=levers.map(le=>le.lever.replace(/_/g,' ')).join(', ')||item.lever?.replace(/_/g,' ')||'';
+      const maxImp=levers.length
+        ? Math.max(...levers.map(le=>Math.max(...Object.values(le.process_impacts||{}).map(Number))))
+        : (item.impact_pct||0);
+      return `
+      <div class="lib-item" onclick="toggleLib(this,${i})" data-idx="${i}">
+        <div class="lib-item-check"></div>
+        <div class="lib-item-info">
+          <h4>${item.name}</h4>
+          <p>${item.description||''}</p>
+          <div style="margin-top:4px"><span class="tag tag-blue">${leverStr}</span><span class="tag tag-yellow" style="margin-left:4px">${(maxImp*100).toFixed(0)}%</span></div>
+        </div>
+      </div>
+    `}).join('');
+    window._libData=lib;
+    document.getElementById('lib-modal').classList.add('open');
+  });
+}
+
+function toggleLib(el,idx){el.classList.toggle('selected');
+  if(_libSelected.has(idx))_libSelected.delete(idx);else _libSelected.add(idx);
+}
+
+async function addFromLibrary(){
+  for(const idx of _libSelected){
+    const item=window._libData[idx];
+    const data={...item,adoption_pct:0.80,start_month:1,end_month:12,wave:1};
+    delete data.description;data.description=item.description||'';
+    const r=await fetch(API+`/api/initiatives/${_libType}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const init=await r.json();
+    if(_libType==='auto')_autoInits.push(init);else _opmodelInits.push(init);
+  }
+  closeModal('lib-modal');
+  renderInits(_libType);
+  toast(`${_libSelected.size} initiatives added`);
+}
+
+function openInitModal(type,editInit){
+  _initType=type;
+  _editInitId=editInit?editInit.id:null;
+  document.getElementById('init-modal-title').textContent=editInit
+    ?(type==='auto'?'Edit Automation & AI Initiative':'Edit Operating Model Initiative')
+    :(type==='auto'?'Custom Automation & AI Initiative':'Custom Operating Model Initiative');
+  document.getElementById('init-name').value=editInit?editInit.name:'';
+  document.getElementById('init-adoption').value=editInit?((editInit.adoption_pct||0.8)*100).toFixed(0):'80';
+  document.getElementById('init-start').value=editInit?editInit.start_month:1;
+  document.getElementById('init-end').value=editInit?editInit.end_month:12;
+  document.getElementById('init-wave').value=editInit?editInit.wave:1;
+  document.getElementById('init-complexity').value=editInit?editInit.complexity:'medium';
+  document.getElementById('init-desc').value=editInit?editInit.description:'';
+  // Ramp fields
+  document.getElementById('init-ramp1').value=editInit?((editInit.ramp_year1||0.4)*100).toFixed(0):'40';
+  document.getElementById('init-ramp2').value=editInit?((editInit.ramp_year2||0.8)*100).toFixed(0):'80';
+  document.getElementById('init-ramp3').value=editInit?((editInit.ramp_year3||1.0)*100).toFixed(0):'100';
+  // Build levers UI
+  const levers=editInit?.levers||[];
+  if(levers.length){
+    _initLevers=JSON.parse(JSON.stringify(levers));
+  } else if(editInit?.lever){
+    const procs=editInit.eligible_processes||['all'];
+    const imp=editInit.impact_pct||0;
+    const pi=('all' in procs || !procs.length)?{'_all':imp}:Object.fromEntries(procs.map(p=>[p,imp]));
+    _initLevers=[{lever:editInit.lever,process_impacts:pi}];
+  } else {
+    _initLevers=[{lever:'aht_reduction',process_impacts:{'_all':0.10}}];
+  }
+  renderInitLevers();
+  document.getElementById('init-modal').classList.add('open');
+}
+
+let _initLevers=[];
+
+async function renderInitLevers(){
+  // FIX #12: Fetch queue processes
+  let qProcs=[];
+  try{const r=await fetch(API+'/api/queue-processes');qProcs=await r.json();}catch(e){}
+  const wrap=document.getElementById('init-levers-wrap');
+  if(!wrap)return;
+  wrap.innerHTML=_initLevers.map((le,li)=>{
+    const pi=le.process_impacts||{};
+    const hasAll='_all' in pi;
+    return `<div class="card" style="margin-bottom:8px;padding:12px;background:var(--ey-gray-50)">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <span style="font-weight:600;font-size:12px;color:var(--ey-gray-500)">Lever ${li+1}</span>
+        <select class="init-lever-sel" data-li="${li}" onchange="updateLeverType(${li},this.value)" style="flex:1;padding:4px 8px;border:1px solid var(--ey-gray-200);border-radius:4px;font-size:13px">
+          <option value="deflection" ${le.lever==='deflection'?'selected':''}>Deflection</option>
+          <option value="aht_reduction" ${le.lever==='aht_reduction'?'selected':''}>AHT Reduction</option>
+          <option value="acw_reduction" ${le.lever==='acw_reduction'?'selected':''}>ACW Reduction</option>
+          <option value="repeat_reduction" ${le.lever==='repeat_reduction'?'selected':''}>Repeat Reduction</option>
+          <option value="channel_shift" ${le.lever==='channel_shift'?'selected':''}>Channel Shift</option>
+          <option value="concurrency_uplift" ${le.lever==='concurrency_uplift'?'selected':''}>Concurrency Uplift</option>
+          <option value="shrinkage_reduction" ${le.lever==='shrinkage_reduction'?'selected':''}>Shrinkage Reduction</option>
+          <option value="occupancy_uplift" ${le.lever==='occupancy_uplift'?'selected':''}>Occupancy Uplift</option>
+          <option value="schedule_efficiency" ${le.lever==='schedule_efficiency'?'selected':''}>Schedule Efficiency</option>
+        </select>
+        ${_initLevers.length>1?`<button class="btn btn-ghost btn-sm" onclick="removeLever(${li})" style="color:var(--ey-red);padding:2px 6px">✕</button>`:''}
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--ey-gray-500);margin-bottom:4px">Process Impacts:</div>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;margin-bottom:6px;cursor:pointer">
+        <input type="checkbox" ${hasAll?'checked':''} onchange="toggleAllProcesses(${li},this.checked)"> Apply to ALL processes
+        ${hasAll?`<input type="number" value="${((pi._all||0)*100).toFixed(0)}" min="0" max="100" step="1"
+          style="width:60px;padding:2px 6px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono);font-size:12px;margin-left:4px"
+          onchange="updateAllImpact(${li},this.value)">%`:''}
+      </label>
+      ${!hasAll?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px">
+        ${qProcs.map(p=>{
+          const val=pi[p]||0;
+          return `<div style="display:flex;align-items:center;gap:4px;font-size:12px">
+            <span style="flex:1;text-transform:capitalize">${p.replace(/_/g,' ')}</span>
+            <input type="number" value="${(val*100).toFixed(0)}" min="0" max="100" step="1"
+              style="width:50px;padding:2px 4px;border:1px solid var(--ey-gray-200);border-radius:4px;font-family:var(--font-mono);font-size:11px"
+              onchange="updateProcessImpact(${li},'${p}',this.value)">%
+          </div>`;
+        }).join('')}
+        ${qProcs.length===0?'<span style="color:var(--ey-gray-400);font-size:12px">No queues defined yet — define BUs first</span>':''}
+      </div>`:''}
+      <div style="margin-top:8px;border-top:1px solid var(--ey-gray-200);padding-top:6px">
+        <a href="#" onclick="toggleLeverCaps(this,${li},'${le.lever}');return false" style="font-size:11px;color:var(--ey-blue)">ⓘ Show effective impact by complexity ▾</a>
+        <div class="lever-caps-detail" id="lever-caps-${li}" style="display:none;font-size:11px;margin-top:4px;background:white;padding:6px 8px;border-radius:4px"></div>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.innerHTML+=`<button class="btn btn-ghost btn-sm" onclick="addLever()" style="margin-top:4px">+ Add Lever</button>`;
+}
+
+function updateLeverType(li,val){_initLevers[li].lever=val;}
+function toggleAllProcesses(li,isAll){
+  if(isAll){
+    const oldMax=Math.max(...Object.values(_initLevers[li].process_impacts||{}).map(Number),0);
+    _initLevers[li].process_impacts={'_all':oldMax||0.10};
+  } else {
+    const val=_initLevers[li].process_impacts._all||0.10;
+    _initLevers[li].process_impacts={};
+    // Will show per-process fields on re-render
+  }
+  renderInitLevers();
+}
+function updateAllImpact(li,val){_initLevers[li].process_impacts._all=Number(val)/100;}
+function updateProcessImpact(li,proc,val){
+  const v=Number(val)/100;
+  if(v>0)_initLevers[li].process_impacts[proc]=v;
+  else delete _initLevers[li].process_impacts[proc];
+}
+function addLever(){_initLevers.push({lever:'aht_reduction',process_impacts:{'_all':0.10}});renderInitLevers();}
+function removeLever(li){_initLevers.splice(li,1);renderInitLevers();}
+function toggleLeverCaps(link,li,lever){
+  const el=document.getElementById('lever-caps-'+li);
+  if(el.style.display!=='none'){el.style.display='none';return}
+  const le=_initLevers[li];const pi=le.process_impacts||{};
+  const maxImpact='_all' in pi?pi._all:Math.max(...Object.values(pi).map(Number),0);
+  const adoption=Number(document.getElementById('init-adoption')?.value||80)/100;
+  const bands=['simple','medium','complex'];
+  const bandLabels={simple:'Simple (≤30%)',medium:'Medium (31–60%)',complex:'Complex (>60%)'};
+  const bandColors={simple:'#3CB371',medium:'#DAA520',complex:'#DC3545'};
+  let html='<table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="border-bottom:1px solid var(--ey-gray-200)">';
+  html+='<th style="text-align:left;padding:2px 4px">Band</th><th>Complexity Discount</th><th>Raw Impact</th><th>Realization Steps</th></tr></thead><tbody>';
+  bands.forEach(b=>{
+    const pc=b==='simple'?0.15:b==='medium'?0.45:0.75;
+    const raw=maxImpact*adoption*(1-pc*0.3);
+    html+=`<tr><td style="padding:2px 4px;color:${bandColors[b]};font-weight:600">${bandLabels[b]}</td>
+      <td style="text-align:center">${(pc*30).toFixed(0)}%</td>
+      <td style="text-align:center;font-family:var(--font-mono)">${(raw*100).toFixed(1)}%</td>
+      <td style="text-align:center;font-family:var(--font-mono)">1st: ${(raw*0.9*100).toFixed(1)}% · 2nd: ${(raw*0.75*100).toFixed(1)}% · 3rd: ${(raw*0.6*100).toFixed(1)}%</td></tr>`;
+  });
+  html+='</tbody></table>';
+  html+=`<div style="margin-top:4px;font-style:italic;color:var(--ey-gray-500)">Pool-based: Effective = Raw × Step Realization, capped by pool ceiling. ${(maxImpact*100).toFixed(0)}% input × ${(adoption*100).toFixed(0)}% adoption.</div>`;
+  el.innerHTML=html;el.style.display='';
+}
+
+let _editInitId=null;
+
+async function saveInit(){
+  const data={
+    name:document.getElementById('init-name').value,
+    levers:_initLevers,
+    adoption_pct:Number(document.getElementById('init-adoption').value)/100,
+    start_month:Number(document.getElementById('init-start').value),
+    end_month:Number(document.getElementById('init-end').value),
+    wave:Number(document.getElementById('init-wave').value),
+    complexity:document.getElementById('init-complexity').value,
+    description:document.getElementById('init-desc').value,
+    eligible_channels:['all'],
+    ramp_year1:Number(document.getElementById('init-ramp1')?.value||40)/100,
+    ramp_year2:Number(document.getElementById('init-ramp2')?.value||80)/100,
+    ramp_year3:Number(document.getElementById('init-ramp3')?.value||100)/100,
+  };
+  if(_editInitId){
+    const r=await fetch(API+`/api/initiatives/${_initType}/${_editInitId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const updated=await r.json();
+    if(_initType==='auto')_autoInits=_autoInits.map(i=>i.id===_editInitId?updated:i);
+    else _opmodelInits=_opmodelInits.map(i=>i.id===_editInitId?updated:i);
+    _editInitId=null;
+    closeModal('init-modal');renderInits(_initType);toast('Initiative updated');
+  } else {
+    const r=await fetch(API+`/api/initiatives/${_initType}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const init=await r.json();
+    if(_initType==='auto')_autoInits.push(init);else _opmodelInits.push(init);
+    closeModal('init-modal');renderInits(_initType);toast('Initiative added');
+  }
+}
+
+async function deleteInit(type,id){
+  await fetch(API+`/api/initiatives/${type}/${id}`,{method:'DELETE'});
+  if(type==='auto')_autoInits=_autoInits.filter(i=>i.id!==id);
+  else _opmodelInits=_opmodelInits.filter(i=>i.id!==id);
+  renderInits(type);
+}
+
+function editInit(type,id){
+  const inits=type==='auto'?_autoInits:_opmodelInits;
+  const init=inits.find(i=>i.id===id);
+  if(init)openInitModal(type,init);
+}
+
+function renderInits(type){
+  const inits=type==='auto'?_autoInits:_opmodelInits;
+  const grid=document.getElementById(type==='auto'?'auto-init-grid':'opmodel-init-grid');
+  const empty=document.getElementById(type==='auto'?'auto-empty':'opmodel-empty');
+  if(!inits.length){grid.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  grid.innerHTML=inits.map(i=>{
+    const compColor={low:'tag-green',medium:'tag-yellow',high:'tag-red'}[i.complexity]||'tag-gray';
+    // Show levers info (multi-lever format)
+    const levers=i.levers||[];
+    const leverTags=levers.length
+      ? levers.map(le=>`<span class="tag tag-blue">${(le.lever||'').replace(/_/g,' ')}</span>`).join('')
+      : `<span class="tag tag-blue">${(i.lever||'').replace(/_/g,' ')}</span>`;
+    const impactSummary=levers.length
+      ? levers.map(le=>{
+          const pi=le.process_impacts||{};
+          const maxImp=Math.max(...Object.values(pi).map(Number));
+          return `${(maxImp*100).toFixed(0)}%`;
+        }).join('/')
+      : `${((i.impact_pct||0)*100).toFixed(0)}%`;
+    return `<div class="init-card">
+      <div class="init-card-head">
+        <div class="init-card-title">${i.name}</div>
+        <span class="tag ${compColor}">${i.complexity||'medium'}</span>
+      </div>
+      <div class="init-card-desc">${i.description||''}</div>
+      <div class="init-card-meta">
+        ${leverTags}
+        <span class="tag tag-yellow">${impactSummary} impact</span>
+        <span class="tag tag-gray">W${i.wave||1}</span>
+        <span class="tag tag-gray">M${i.start_month||1}–M${i.end_month||12}</span>
+        <span class="tag tag-green">${((i.adoption_pct||0.8)*100).toFixed(0)}% adoption</span>
+      </div>
+      <div class="init-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editInit('${type}','${i.id}')">✏️ Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteInit('${type}','${i.id}')" style="color:var(--ey-red)">🗑 Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══ LOCATION STRATEGY ═══ */
+function openLocModal(){document.getElementById('loc-modal').classList.add('open')}
+async function saveLoc(){
+  const data={
+    from_location:document.getElementById('loc-from').value,
+    to_location:document.getElementById('loc-to').value,
+    move_pct:Number(document.getElementById('loc-pct').value)/100,
+    wave:Number(document.getElementById('loc-wave').value),
+    start_month:Number(document.getElementById('loc-start').value),
+    end_month:Number(document.getElementById('loc-end').value),
+  };
+  const r=await fetch(API+'/api/location-strategy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  _locMoves.push(await r.json());
+  closeModal('loc-modal');renderLocMoves();toast('Movement added');
+}
+async function deleteLocMove(id){
+  await fetch(API+`/api/location-strategy/${id}`,{method:'DELETE'});
+  _locMoves=_locMoves.filter(m=>m.id!==id);renderLocMoves();
+}
+function renderLocMoves(){
+  const wrap=document.getElementById('loc-table-wrap');
+  const empty=document.getElementById('loc-empty');
+  if(!_locMoves.length){wrap.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  wrap.innerHTML=`<div class="table-wrap"><table><thead><tr><th>From</th><th>To</th><th>% to Move</th><th>Wave</th><th>Start</th><th>End</th><th></th></tr></thead>
+  <tbody>${_locMoves.map(m=>`<tr>
+    <td style="font-weight:600">${m.from_location}</td>
+    <td style="font-weight:600">${m.to_location}</td>
+    <td class="mono">${((m.move_pct||0)*100).toFixed(0)}%</td>
+    <td><span class="tag tag-gray">W${m.wave||1}</span></td>
+    <td class="mono">M${m.start_month||1}</td><td class="mono">M${m.end_month||12}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="deleteLocMove('${m.id}')" style="color:var(--ey-red)">🗑</button></td>
+  </tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ═══ TECHNOLOGY ═══ */
+function openTechLibrary(){
+  _libType='tech';_libSelected=new Set();
+  document.getElementById('lib-modal-title').textContent='Technology Library';
+  fetch(API+'/api/technology-library').then(r=>r.json()).then(lib=>{
+    document.getElementById('lib-grid').innerHTML=lib.map((item,i)=>`
+      <div class="lib-item" onclick="toggleLib(this,${i})" data-idx="${i}">
+        <div class="lib-item-check"></div>
+        <div class="lib-item-info">
+          <h4>${item.name}</h4>
+          <p>${item.description||''}</p>
+          <div style="margin-top:4px"><span class="tag tag-gray">${item.category}</span>${item.one_time?`<span class="tag tag-yellow" style="margin-left:4px">${fmt(item.one_time)} one-time</span>`:''}</div>
+        </div>
+      </div>
+    `).join('');
+    window._libData=lib;
+    document.getElementById('lib-modal').classList.add('open');
+  });
+}
+
+async function addTechFromLibrary(){
+  for(const idx of _libSelected){
+    const item=window._libData[idx];
+    const r=await fetch(API+'/api/technology',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...item,start_month:1,end_month:36})});
+    _techItems.push(await r.json());
+  }
+  closeModal('lib-modal');renderTech();toast(`${_libSelected.size} technologies added`);
+}
+
+// Override addFromLibrary for tech
+const _origAddFromLib=addFromLibrary;
+addFromLibrary=function(){if(_libType==='tech')addTechFromLibrary();else _origAddFromLib()}
+
+let _editTechId=null;
+
+function openTechModal(editTech){
+  _editTechId=editTech?editTech.id:null;
+  document.getElementById('tech-modal-title').textContent=editTech?'Edit Technology':'Add Technology';
+  document.getElementById('tech-name').value=editTech?editTech.name:'';
+  document.getElementById('tech-cat').value=editTech?editTech.category:'telephony';
+  document.getElementById('tech-cost-type').value=editTech?editTech.cost_type:'both';
+  document.getElementById('tech-onetime').value=editTech?editTech.one_time:0;
+  document.getElementById('tech-recurring').value=editTech?editTech.recurring_monthly:0;
+  document.getElementById('tech-start').value=editTech?editTech.start_month:1;
+  document.getElementById('tech-end').value=editTech?editTech.end_month:36;
+  document.getElementById('tech-desc').value=editTech?editTech.description:'';
+  document.getElementById('tech-modal').classList.add('open');
+}
+
+async function saveTech(){
+  const data={
+    name:document.getElementById('tech-name').value,
+    category:document.getElementById('tech-cat').value,
+    cost_type:document.getElementById('tech-cost-type').value,
+    one_time:Number(document.getElementById('tech-onetime').value),
+    recurring_monthly:Number(document.getElementById('tech-recurring').value),
+    start_month:Number(document.getElementById('tech-start').value),
+    end_month:Number(document.getElementById('tech-end').value),
+    description:document.getElementById('tech-desc').value,
+  };
+  if(_editTechId){
+    const r=await fetch(API+`/api/technology/${_editTechId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const updated=await r.json();
+    _techItems=_techItems.map(t=>t.id===_editTechId?updated:t);
+    _editTechId=null;
+    closeModal('tech-modal');renderTech();toast('Technology updated');
+  } else {
+    const r=await fetch(API+'/api/technology',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    _techItems.push(await r.json());
+    closeModal('tech-modal');renderTech();toast('Technology added');
+  }
+}
+
+async function deleteTech(id){
+  await fetch(API+`/api/technology/${id}`,{method:'DELETE'});
+  _techItems=_techItems.filter(t=>t.id!==id);renderTech();
+}
+
+function editTech(id){
+  const t=_techItems.find(t=>t.id===id);
+  if(t)openTechModal(t);
+}
+
+function renderTech(){
+  const grid=document.getElementById('tech-grid');
+  const empty=document.getElementById('tech-empty');
+  if(!_techItems.length){grid.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  grid.innerHTML=_techItems.map(t=>`<div class="init-card">
+    <div class="init-card-head">
+      <div class="init-card-title">${t.name}</div>
+      <span class="tag tag-gray">${t.category||'other'}</span>
+    </div>
+    <div class="init-card-desc">${t.description||''}</div>
+    <div class="init-card-meta">
+      ${t.one_time?`<span class="tag tag-yellow">${fmt(t.one_time)} one-time</span>`:''}
+      ${t.recurring_monthly?`<span class="tag tag-blue">${fmt(t.recurring_monthly)}/mo</span>`:''}
+      <span class="tag tag-gray">M${t.start_month||1}–M${t.end_month||36}</span>
+    </div>
+    <div class="init-card-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editTech('${t.id}')">✏️ Edit</button>
+      <button class="btn btn-ghost btn-sm" onclick="deleteTech('${t.id}')" style="color:var(--ey-red)">🗑 Remove</button>
+    </div>
+  </div>`).join('');
+}
+
+/* ═══ RUN MODEL ═══ */
+async function runModel(){
+  const btn=document.getElementById('run-btn');
+  const prog=document.getElementById('run-progress');
+  const fill=document.getElementById('run-progress-fill');
+  const txt=document.getElementById('run-progress-text');
+  btn.disabled=true;btn.textContent='Running...';
+  prog.style.display='block';fill.style.width='0%';
+
+  const steps=['Calculating baselines...','Applying Automation & AI...','Applying Operating Model...','Applying Location Strategy...','Computing financials...','Generating insights...'];
+  for(let i=0;i<steps.length;i++){
+    txt.textContent=steps[i];
+    fill.style.width=((i+1)/steps.length*100)+'%';
+    await new Promise(r=>setTimeout(r,400));
+  }
+
+  const r=await fetch(API+'/api/run',{method:'POST',headers:{'Content-Type':'application/json'}});
+  _result=await r.json();
+
+  btn.disabled=false;btn.textContent='▶ Run Model';
+  fill.style.width='100%';txt.textContent='Complete!';
+
+  if(_result.error){toast(_result.error,'error');return}
+
+  toast('Model calculated successfully');
+  setTimeout(()=>goPage('impact'),500);
+}
+
+/* ═══ INITIATIVE IMPACT SUMMARY ═══ */
+function renderImpact(){
+  if(!_result?.initiative_impacts){document.getElementById('impact-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const impacts=_result.initiative_impacts;
+  const totalSaving=impacts.reduce((s,i)=>s+i.annual_saving,0);
+  let html=`<div class="metrics-row">
+    <div class="metric-card yellow"><div class="metric-label">Total Annual Saving</div><div class="metric-value">${fmt(totalSaving)}</div></div>
+    <div class="metric-card blue"><div class="metric-label">Initiatives</div><div class="metric-value">${impacts.length}</div></div>
+    <div class="metric-card green"><div class="metric-label">Total FTE Reduction</div><div class="metric-value">${fmtN(impacts.reduce((s,i)=>s+i.fte_reduction,0),1)}</div></div>
+  </div>`;
+
+  // Grouped by layer
+  const layers=['Automation & AI','Operating Model','Location Strategy'];
+  layers.forEach(layer=>{
+    const items=impacts.filter(i=>i.layer===layer);
+    if(!items.length)return;
+    const layerSaving=items.reduce((s,i)=>s+i.annual_saving,0);
+    html+=`<div class="card"><div class="card-header"><h3>${layer}</h3><span class="tag tag-yellow">${fmt(layerSaving)}/yr</span></div>
+    <div class="table-wrap"><table><thead><tr><th>Initiative</th><th>Lever</th><th>Queues</th><th>Volume ↓</th><th>AHT ↓</th><th>FTE ↓</th><th>Annual Saving</th><th>% of Total</th><th>Ramp Y1</th><th>Ramp Y2</th><th>Ramp Y3</th></tr></thead>
+    <tbody>${items.map(i=>`<tr>
+      <td style="font-weight:600">${i.name}</td>
+      <td><span class="tag tag-blue">${(i.lever||'').replace(/_/g,' ')}</span></td>
+      <td class="mono">${i.queues_impacted}</td>
+      <td class="mono">${fmtN(i.volume_reduction)}</td>
+      <td class="mono">${(i.aht_reduction_mins||0).toFixed(1)}m</td>
+      <td class="mono">${(i.fte_reduction||0).toFixed(1)}</td>
+      <td class="mono" style="font-weight:700;color:var(--ey-green)">${fmt(i.annual_saving)}</td>
+      <td class="mono">${(i.pct_of_total||0).toFixed(1)}%</td>
+      <td class="mono">${((i.ramp_year1||0)*100).toFixed(0)}%</td>
+      <td class="mono">${((i.ramp_year2||0)*100).toFixed(0)}%</td>
+      <td class="mono">${((i.ramp_year3||0)*100).toFixed(0)}%</td>
+    </tr>`).join('')}</tbody></table></div></div>`;
+  });
+
+  document.getElementById('impact-content').innerHTML=html;
+}
+
+/* ═══ DASHBOARD ═══ */
+function renderDashboard(){
+  if(!_result?.summary){document.getElementById('dashboard-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const s=_result.summary;const yd=_result.yearly_data;
+  const active=s.active_steps||[];
+
+  let html=`<div class="metrics-row">
+    <div class="metric-card yellow"><div class="metric-label">Baseline FTE</div><div class="metric-value">${fmtN(s.baseline_fte,0)}</div></div>
+    <div class="metric-card green"><div class="metric-label">Final FTE</div><div class="metric-value">${fmtN(s.final_fte,0)}</div><div class="metric-sub">↓ ${fmtN(s.fte_reduction,0)} reduction</div></div>
+    <div class="metric-card blue"><div class="metric-label">Total Net Benefit</div><div class="metric-value">${fmt(s.total_net_benefit)}</div></div>
+    <div class="metric-card teal"><div class="metric-label">ROI</div><div class="metric-value">${s.roi_pct}%</div></div>
+    <div class="metric-card purple"><div class="metric-label">Payback</div><div class="metric-value">${s.payback_year?'Year '+s.payback_year:'N/A'}</div></div>
+    <div class="metric-card red"><div class="metric-label">NPV</div><div class="metric-value">${fmt(s.npv)}</div></div>
+    <div class="metric-card orange"><div class="metric-label">IRR</div><div class="metric-value">${s.irr||0}%</div></div>
+    <div class="metric-card blue"><div class="metric-label">Blended Cost/FTE</div><div class="metric-value">${fmt(s.blended_baseline_cost||0)}</div></div>
+  </div>`;
+
+  // FIX #7: Waterfall bars — only active steps
+  const stepLabels={automation_ai:'After Auto & AI',opmodel:'After Op Model',location:'After Location'};
+  const stepColors={automation_ai:'var(--ey-blue)',opmodel:'var(--ey-teal)',location:'var(--ey-green)'};
+  if(yd.length){
+    const y=yd[yd.length-1];
+    const maxFte=y.baseline_fte;
+    const bars=[{label:'Baseline',val:y.baseline_fte,color:'var(--ey-gray-600)'}];
+    active.forEach(step=>{
+      const stepFte=y.step_fte?.[step]??y.baseline_fte;
+      bars.push({label:stepLabels[step]||step,val:stepFte,color:stepColors[step]||'var(--ey-gray-400)'});
+    });
+    // Add Final if last step is location (FTE same but cost different)
+    const lastNonLoc=active.filter(s=>s!=='location');
+    if(active.includes('location') && lastNonLoc.length){
+      // Location doesn't change FTE, already shown
+    }
+    html+=`<div class="card"><div class="card-header"><h3>FTE Waterfall (Year ${y.year})</h3></div>
+    <div class="waterfall-chart">${bars.map(b=>{
+      const h=maxFte>0?(b.val/maxFte*180):0;
+      return `<div class="wf-bar"><div class="wf-bar-value" style="color:${b.color}">${fmtN(b.val,0)}</div>
+        <div class="wf-bar-fill" style="height:${h}px;background:${b.color}"></div>
+        <div class="wf-bar-label">${b.label}</div></div>`;
+    }).join('')}</div></div>`;
+  }
+
+  // FIX #9: Year-over-Year table — only show active step columns
+  const stepSavingLabels={automation_ai:'Auto & AI Saving',opmodel:'OpModel Saving',location:'Location Saving'};
+  let cols='<th>Year</th><th>Baseline FTE</th><th>Final FTE</th><th>FTE ↓</th>';
+  active.forEach(step=>{cols+=`<th>${stepSavingLabels[step]||step}</th>`});
+  cols+='<th>Total Labor</th><th>Tech Cost</th><th>Net Saving</th>';
+
+  html+=`<div class="card"><div class="card-header"><h3>Year-over-Year Breakdown</h3></div>
+  <div class="table-wrap"><table><thead><tr>${cols}</tr></thead>
+  <tbody>${yd.map(y=>{
+    let row=`<td style="font-weight:700">Y${y.year}</td>
+    <td class="mono">${fmtN(y.baseline_fte,0)}</td><td class="mono">${fmtN(y.final_fte,0)}</td>
+    <td class="mono" style="color:var(--ey-green)">-${fmtN(y.fte_reduction,0)}</td>`;
+    active.forEach(step=>{row+=`<td class="mono">${fmt(y.step_savings?.[step]||0)}</td>`});
+    row+=`<td class="mono" style="font-weight:700">${fmt(y.total_labor_saving)}</td>
+    <td class="mono" style="color:var(--ey-red)">(${fmt(y.total_tech)})</td>
+    <td class="mono" style="font-weight:700;color:${y.net_saving>=0?'var(--ey-green)':'var(--ey-red)'}">${fmt(y.net_saving)}</td>`;
+    return `<tr>${row}</tr>`;
+  }).join('')}</tbody></table></div></div>`;
+
+  // Cumulative
+  html+=`<div class="card"><div class="card-header"><h3>Cumulative Net Benefit</h3></div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap">${(s.cumulative||[]).map((c,i)=>`
+    <div style="text-align:center;padding:16px 24px;background:${c>=0?'#E6F5EB':'#FDEAED'};border-radius:var(--radius-lg);min-width:120px">
+      <div style="font-size:11px;font-weight:600;color:var(--ey-gray-500)">Year ${i+1}</div>
+      <div style="font-size:22px;font-weight:700;color:${c>=0?'var(--ey-green)':'var(--ey-red)'}; font-family:var(--font-mono)">${fmt(c)}</div>
+    </div>
+  `).join('')}</div></div>`;
+
+  // Location Mix Before/After
+  const lb=s.location_breakdown;
+  if(lb){
+    const locs=[...new Set([...Object.keys(lb.before||{}),...Object.keys(lb.after||{})])];
+    const locLabels={onshore:'Onshore',nearshore:'Nearshore',offshore:'Offshore','3rd_party':'3rd Party'};
+    const locColors={onshore:'var(--ey-blue)',nearshore:'var(--ey-teal)',offshore:'var(--ey-green)','3rd_party':'var(--ey-orange)'};
+    const totalBefore=Object.values(lb.before||{}).reduce((a,b)=>a+b,0);
+    const totalAfter=Object.values(lb.after||{}).reduce((a,b)=>a+b,0);
+    const maxFte=Math.max(totalBefore,totalAfter,1);
+    const hasMoves=locs.some(l=>(lb.before[l]||0)!==(lb.after[l]||0));
+    html+=`<div class="card"><div class="card-header"><h3>Location Mix${hasMoves?' — Before vs After':''}</h3>
+      <span class="tag tag-blue">Blended Cost: ${fmt(lb.blended_cost_before)}/FTE${hasMoves?' → '+fmt(lb.blended_cost_after)+'/FTE':''}</span></div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end">
+      ${hasMoves?`
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:12px;font-weight:600;color:var(--ey-gray-500);margin-bottom:8px;text-align:center">BEFORE (${fmtN(totalBefore,0)} FTE)</div>
+        ${locs.map(l=>{
+          const v=lb.before[l]||0; const pct=totalBefore>0?(v/totalBefore*100).toFixed(1):'0';
+          const w=totalBefore>0?(v/maxFte*100):0;
+          return v>0?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="width:80px;font-size:12px;text-align:right">${locLabels[l]||l}</span>
+            <div style="flex:1;background:var(--ey-gray-100);border-radius:4px;height:24px;overflow:hidden">
+              <div style="width:${w}%;height:100%;background:${locColors[l]||'var(--ey-gray-400)'};border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:white;min-width:fit-content">${fmtN(v,0)} (${pct}%)</div>
+            </div></div>`:'';
+        }).join('')}
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--ey-gray-400);padding-bottom:20px">→</div>
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:12px;font-weight:600;color:var(--ey-gray-500);margin-bottom:8px;text-align:center">AFTER (${fmtN(totalAfter,0)} FTE)</div>
+        ${locs.map(l=>{
+          const v=lb.after[l]||0; const pct=totalAfter>0?(v/totalAfter*100).toFixed(1):'0';
+          const w=totalAfter>0?(v/maxFte*100):0;
+          const beforeV=lb.before[l]||0; const delta=v-beforeV;
+          const deltaStr=delta>0?`<span style="color:var(--ey-green);font-size:10px;margin-left:4px">+${fmtN(delta,0)}</span>`:
+            delta<0?`<span style="color:var(--ey-red);font-size:10px;margin-left:4px">${fmtN(delta,0)}</span>`:'';
+          return v>0||beforeV>0?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="width:80px;font-size:12px;text-align:right">${locLabels[l]||l}</span>
+            <div style="flex:1;background:var(--ey-gray-100);border-radius:4px;height:24px;overflow:hidden">
+              <div style="width:${Math.max(w,2)}%;height:100%;background:${locColors[l]||'var(--ey-gray-400)'};border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:white;min-width:fit-content">${fmtN(v,0)} (${pct}%)${deltaStr}</div>
+            </div></div>`:'';
+        }).join('')}
+      </div>
+      `:`
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--ey-gray-500);margin-bottom:8px">Current Distribution (${fmtN(totalBefore,0)} FTE)</div>
+        ${locs.map(l=>{
+          const v=lb.before[l]||0; const pct=totalBefore>0?(v/totalBefore*100).toFixed(1):'0';
+          return v>0?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="width:80px;font-size:12px;text-align:right">${locLabels[l]||l}</span>
+            <div style="flex:1;background:var(--ey-gray-100);border-radius:4px;height:24px;overflow:hidden">
+              <div style="width:${totalBefore>0?(v/maxFte*100):0}%;height:100%;background:${locColors[l]||'var(--ey-gray-400)'};border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:white;min-width:fit-content">${fmtN(v,0)} (${pct}%)</div>
+            </div></div>`:'';
+        }).join('')}
+      </div>`}
+    </div></div>`;
+  }
+
+  document.getElementById('dashboard-content').innerHTML=html;
+
+  // ═══ ENHANCED SECTIONS (appended after main render) ═══
+  const dashEl=document.getElementById('dashboard-content');
+  let extraHtml='';
+
+  // ── Scenario Comparison ──
+  const scenarios=_result.scenarios||{};
+  if(Object.keys(scenarios).length>1){
+    const scenNames={conservative:'Conservative',base:'Base Case',aggressive:'Aggressive'};
+    const scenColors={conservative:'var(--ey-red)',base:'var(--ey-blue)',aggressive:'var(--ey-green)'};
+    const scenIcons={conservative:'🔻',base:'📊',aggressive:'🔺'};
+    extraHtml+=`<div class="card"><div class="card-header"><h3>Scenario Comparison</h3>
+      <span class="tag tag-blue">Conservative / Base / Aggressive</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    ${['conservative','base','aggressive'].map(sk=>{
+      const sc=scenarios[sk]||{};
+      const col=scenColors[sk];
+      return `<div style="border:2px solid ${col};border-radius:var(--radius-lg);padding:16px;text-align:center">
+        <div style="font-size:20px;margin-bottom:4px">${scenIcons[sk]}</div>
+        <div style="font-size:14px;font-weight:700;color:${col};margin-bottom:12px">${scenNames[sk]}</div>
+        <div style="display:grid;gap:8px;text-align:left">
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">FTE Reduction</span><span class="mono" style="font-weight:600">${fmtN(sc.fte_reduction||0,0)}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">Net Benefit</span><span class="mono" style="font-weight:600;color:${(sc.total_net_benefit||0)>=0?'var(--ey-green)':'var(--ey-red)'}">${fmt(sc.total_net_benefit||0)}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">NPV</span><span class="mono" style="font-weight:600">${fmt(sc.npv||0)}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">ROI</span><span class="mono" style="font-weight:600">${sc.roi_pct||0}%</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">Payback</span><span class="mono" style="font-weight:600">${sc.payback_year?'Year '+sc.payback_year:'N/A'}</span></div>
+        </div>
+      </div>`;
+    }).join('')}</div></div>`;
+  }
+
+  // ── Sensitivity Tornado ──
+  const sens=_result.sensitivity||[];
+  if(sens.length){
+    const maxSwing=Math.max(...sens.map(s=>Math.max(Math.abs(s.low_npv-s.base_npv),Math.abs(s.high_npv-s.base_npv))),1);
+    extraHtml+=`<div class="card"><div class="card-header"><h3>Sensitivity Analysis</h3>
+      <span class="tag tag-blue">NPV impact of ±20% change in key variables</span></div>
+    <div style="padding:8px 0">
+    ${sens.map(sv=>{
+      const leftDelta=sv.low_npv-sv.base_npv; const rightDelta=sv.high_npv-sv.base_npv;
+      const leftW=Math.abs(leftDelta)/maxSwing*45; const rightW=Math.abs(rightDelta)/maxSwing*45;
+      const leftCol=leftDelta>=0?'var(--ey-green)':'var(--ey-red)';
+      const rightCol=rightDelta>=0?'var(--ey-green)':'var(--ey-red)';
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="width:120px;font-size:12px;text-align:right;font-weight:600">${sv.variable}</span>
+        <div style="flex:1;display:flex;align-items:center;position:relative;height:28px">
+          <div style="position:absolute;left:50%;width:1px;height:100%;background:var(--ey-gray-300)"></div>
+          <div style="position:absolute;right:50%;width:${leftW}%;height:20px;background:${leftCol};border-radius:3px 0 0 3px;opacity:0.7"></div>
+          <div style="position:absolute;left:50%;width:${rightW}%;height:20px;background:${rightCol};border-radius:0 3px 3px 0;opacity:0.7"></div>
+        </div>
+        <span style="width:80px;font-size:11px;font-family:var(--font-mono);color:var(--ey-gray-500)">${fmt(sv.swing)}</span>
+      </div>`;
+    }).join('')}
+    <div style="display:flex;justify-content:center;gap:24px;margin-top:8px;font-size:11px;color:var(--ey-gray-500)">
+      <span>← −20% change</span><span style="font-weight:600">Base NPV: ${fmt(sens[0]?.base_npv||0)}</span><span>+20% change →</span>
+    </div></div></div>`;
+  }
+
+  // ── Implementation Investment Breakdown ──
+  const impl=s.impl_breakdown||{};
+  if(impl.grand_total>0){
+    const items=[
+      {label:'Technology (Total)',val:impl.technology_total,color:'var(--ey-blue)'},
+      {label:'Change Management',val:impl.change_management,color:'var(--ey-teal)'},
+      {label:'Training & Upskilling',val:impl.training,color:'var(--ey-green)'},
+      {label:'Integration & Migration',val:impl.integration,color:'var(--ey-orange)'},
+      {label:'Contingency',val:impl.contingency,color:'var(--ey-gray-400)'},
+    ].filter(i=>i.val>0);
+    const maxV=Math.max(...items.map(i=>i.val),1);
+    extraHtml+=`<div class="card"><div class="card-header"><h3>Total Investment Required</h3>
+      <span class="tag tag-blue">${fmt(impl.grand_total)}</span></div>
+    <div style="padding:8px 0">
+    ${items.map(i=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span style="width:160px;font-size:12px;text-align:right">${i.label}</span>
+      <div style="flex:1;background:var(--ey-gray-100);border-radius:4px;height:24px;overflow:hidden">
+        <div style="width:${(i.val/maxV*100)}%;height:100%;background:${i.color};border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:white;min-width:fit-content">${fmt(i.val)}</div>
+      </div></div>`).join('')}
+    </div></div>`;
+  }
+
+  // ── Cost of Inaction ──
+  const coi=s.cost_of_inaction||[];
+  if(coi.length && yd.length){
+    extraHtml+=`<div class="card"><div class="card-header"><h3>Cost of Inaction vs Transformation</h3>
+      <span class="tag tag-blue">What happens if you do nothing?</span></div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Year</th><th>Do-Nothing Cost</th><th>With Transformation</th><th>Saving</th><th>Cumulative Saving</th>
+    </tr></thead><tbody>`;
+    let cumSaving=0;
+    coi.forEach((c,i)=>{
+      const transf=yd[i]?.final_cost||0;
+      const saving=c.total_cost-transf-(yd[i]?.total_tech||0);
+      cumSaving+=saving;
+      extraHtml+=`<tr>
+        <td style="font-weight:700">Y${c.year}</td>
+        <td class="mono" style="color:var(--ey-red)">${fmt(c.total_cost)}</td>
+        <td class="mono">${fmt(transf+(yd[i]?.total_tech||0))}</td>
+        <td class="mono" style="color:${saving>=0?'var(--ey-green)':'var(--ey-red)'}; font-weight:600">${fmt(saving)}</td>
+        <td class="mono" style="font-weight:700;color:${cumSaving>=0?'var(--ey-green)':'var(--ey-red)'}">${fmt(cumSaving)}</td>
+      </tr>`;
+    });
+    extraHtml+=`</tbody></table></div></div>`;
+  }
+
+  // ── CX Revenue Impact ──
+  const cx=s.cx_revenue_impact||{};
+  if(cx.enabled && cx.yearly?.length){
+    extraHtml+=`<div class="card"><div class="card-header"><h3>CX Revenue Impact</h3>
+      <span class="tag tag-green">Total Revenue Retained: ${fmt(cx.total_revenue_retained)}</span></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+      <div style="text-align:center;padding:12px 20px;background:#E6F5EB;border-radius:var(--radius-lg)">
+        <div style="font-size:11px;color:var(--ey-gray-500)">Churn Baseline</div>
+        <div style="font-size:20px;font-weight:700;color:var(--ey-red)">${cx.baseline_churn_pct}%</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--ey-gray-400)">→</div>
+      <div style="text-align:center;padding:12px 20px;background:#E6F5EB;border-radius:var(--radius-lg)">
+        <div style="font-size:11px;color:var(--ey-gray-500)">Projected Churn</div>
+        <div style="font-size:20px;font-weight:700;color:var(--ey-green)">${cx.projected_churn_pct}%</div>
+      </div>
+      <div style="text-align:center;padding:12px 20px;background:#E6F5EB;border-radius:var(--radius-lg)">
+        <div style="font-size:11px;color:var(--ey-gray-500)">Churn Reduction</div>
+        <div style="font-size:20px;font-weight:700;color:var(--ey-green)">-${cx.churn_reduction_pct}%</div>
+      </div>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Year</th><th>Churn Rate</th><th>Customers Retained</th><th>Revenue Retained</th>
+    </tr></thead><tbody>
+    ${cx.yearly.map(y=>`<tr>
+      <td style="font-weight:700">Y${y.year}</td>
+      <td class="mono">${y.churn_rate}%</td>
+      <td class="mono" style="color:var(--ey-green)">${fmtN(y.retained_customers,0)}</td>
+      <td class="mono" style="font-weight:600;color:var(--ey-green)">${fmt(y.revenue_retained)}</td>
+    </tr>`).join('')}
+    </tbody></table></div></div>`;
+  }
+
+  // ── Pool Utilization Summary ──
+  const poolSnaps=_result.pool_snapshots||[];
+  if(poolSnaps.length){
+    const lastSnap=poolSnaps[poolSnaps.length-1];
+    const pools=Object.entries(lastSnap.pools||{}).filter(([k,v])=>v.ceiling_fte>0);
+    if(pools.length){
+      const leverNames={deflection:'Deflection',repeat_reduction:'Repeat',channel_shift:'Ch. Shift',
+        aht_reduction:'AHT',acw_reduction:'ACW',concurrency_uplift:'Concurrency',
+        shrinkage_reduction:'Shrinkage',occupancy_uplift:'Occupancy',schedule_efficiency:'Sched. Eff.'};
+      extraHtml+=`<div class="card"><div class="card-header"><h3>Pool Utilization (Year ${lastSnap.year})</h3>
+        <a href="#" onclick="goPage('pools');return false" style="font-size:12px">View full details →</a></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">`;
+      pools.forEach(([lever,pool])=>{
+        const pct=pool.utilization_pct||0;
+        const color=pct>80?'var(--ey-red)':pct>50?'var(--ey-orange)':'var(--ey-green)';
+        extraHtml+=`<div style="padding:10px;border:1px solid var(--ey-gray-200);border-radius:var(--radius)">
+          <div style="font-size:11px;font-weight:600;color:var(--ey-gray-600)">${leverNames[lever]||lever}</div>
+          <div style="font-size:16px;font-weight:700;margin:4px 0">${pct.toFixed(0)}%</div>
+          <div style="height:6px;background:var(--ey-gray-200);border-radius:3px;overflow:hidden">
+            <div style="width:${Math.min(pct,100)}%;height:100%;background:${color};border-radius:3px"></div>
+          </div>
+          <div style="font-size:10px;color:var(--ey-gray-400);margin-top:2px">${pool.consumed_fte.toFixed(1)} / ${pool.ceiling_fte.toFixed(1)} FTE</div>
+        </div>`;
+      });
+      extraHtml+=`</div></div>`;
+    }
+  }
+
+  dashEl.innerHTML+=extraHtml;
+}
+
+/* ═══ POOL UTILIZATION ═══ */
+function renderPools(){
+  const wrap=document.getElementById('pools-content');
+  if(!_result?.pool_snapshots){wrap.innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const snaps=_result.pool_snapshots;
+  const leverNames={deflection:'Deflection',repeat_reduction:'Repeat Reduction',channel_shift:'Channel Shift',
+    aht_reduction:'AHT Reduction',acw_reduction:'ACW Reduction',concurrency_uplift:'Concurrency Uplift',
+    shrinkage_reduction:'Shrinkage Reduction',occupancy_uplift:'Occupancy Uplift',schedule_efficiency:'Schedule Efficiency'};
+  // Stepped realization reference
+  const sr=_steppedRealization.length?_steppedRealization:[0.9,0.75,0.6,0.45];
+  let html=`<div class="card" style="margin-bottom:16px;background:var(--ey-gray-50)">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--ey-dark)">Stepped Realization Factors:</div>
+      ${sr.map((r,i)=>`<span class="tag ${r>=0.7?'tag-green':r>=0.5?'tag-yellow':'tag-gray'}" style="font-family:var(--font-mono)">#${i+1}: ${(r*100).toFixed(0)}%</span>`).join('')}
+      <span style="font-size:11px;color:var(--ey-gray-500)">Each successive initiative on the same lever receives diminishing realization</span>
+    </div>
+  </div>`;
+  snaps.forEach(snap=>{
+    const pools=snap.pools||{};
+    const poolEntries=Object.entries(pools).filter(([k,v])=>v.ceiling_fte>0);
+    if(!poolEntries.length)return;
+    html+=`<div class="card"><div class="card-header"><h3>Year ${snap.year} Pool Consumption</h3>
+      <span class="tag tag-blue">${poolEntries.length} active pools</span></div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>Lever</th><th>Pool Ceiling (FTE)</th><th>Consumed (FTE)</th><th>Remaining (FTE)</th>
+        <th>Utilization</th><th>Initiatives</th></tr></thead><tbody>`;
+    poolEntries.forEach(([lever,pool])=>{
+      const pct=pool.utilization_pct||0;
+      const barColor=pct>80?'var(--ey-red)':pct>50?'var(--ey-orange)':'var(--ey-green)';
+      html+=`<tr><td style="font-weight:600">${leverNames[lever]||lever}</td>
+        <td class="mono">${pool.ceiling_fte.toFixed(1)}</td>
+        <td class="mono">${pool.consumed_fte.toFixed(1)}</td>
+        <td class="mono">${pool.remaining_fte.toFixed(1)}</td>
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;height:8px;background:var(--ey-gray-200);border-radius:4px;overflow:hidden">
+            <div style="width:${Math.min(pct,100)}%;height:100%;background:${barColor};border-radius:4px"></div>
+          </div><span class="mono" style="min-width:40px;text-align:right">${pct.toFixed(0)}%</span>
+        </div></td>
+        <td class="mono">${pool.initiatives_consuming}</td></tr>`;
+    });
+    html+=`</tbody></table></div></div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+/* ═══ ROLE BREAKDOWN ═══ */
+function renderRoles(){
+  const wrap=document.getElementById('roles-content');
+  if(!_result?.summary?.role_breakdown){wrap.innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const roles=_result.summary.role_breakdown;
+  const attrition=_result.summary.attrition_timeline||{};
+  const totalReduction=roles.reduce((s,r)=>s+r.reduction,0);
+  const totalSaving=roles.reduce((s,r)=>s+r.annual_saving,0);
+  // Summary cards
+  let html=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">
+    <div class="card" style="text-align:center"><div style="font-size:11px;color:var(--ey-gray-500)">Total FTE Reduction</div>
+      <div style="font-size:24px;font-weight:700;color:var(--ey-red)">${totalReduction.toFixed(0)}</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:11px;color:var(--ey-gray-500)">Annual Saving</div>
+      <div style="font-size:24px;font-weight:700;color:var(--ey-green)">${fmtC(totalSaving)}</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:11px;color:var(--ey-gray-500)">Attrition Crossover</div>
+      <div style="font-size:24px;font-weight:700;color:var(--ey-blue)">${attrition.crossover_month?'Month '+attrition.crossover_month:'N/A'}</div>
+      <div style="font-size:11px;color:var(--ey-gray-400)">Natural attrition covers reduction</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:11px;color:var(--ey-gray-500)">Roles Impacted</div>
+      <div style="font-size:24px;font-weight:700">${roles.filter(r=>r.reduction>0).length} / ${roles.length}</div></div>
+  </div>`;
+  // Role table
+  html+=`<div class="card"><div class="card-header"><h3>FTE by Role</h3></div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Role</th><th>Baseline FTE</th><th>Future FTE</th><th>Reduction</th><th>% Reduction</th><th>Cost/FTE</th><th>Annual Saving</th>
+    </tr></thead><tbody>`;
+  roles.forEach(r=>{
+    const color=r.pct_reduction>30?'var(--ey-red)':r.pct_reduction>15?'var(--ey-orange)':'var(--ey-green)';
+    html+=`<tr><td style="font-weight:600">${r.role}</td>
+      <td class="mono">${r.baseline_fte.toFixed(1)}</td>
+      <td class="mono">${r.future_fte.toFixed(1)}</td>
+      <td class="mono" style="color:${color}">${r.reduction.toFixed(1)}</td>
+      <td><span class="tag ${r.pct_reduction>30?'tag-red':r.pct_reduction>15?'tag-yellow':'tag-green'}">${r.pct_reduction.toFixed(0)}%</span></td>
+      <td class="mono">${fmtC(r.cost_per_fte)}</td>
+      <td class="mono" style="font-weight:600;color:var(--ey-green)">${fmtC(r.annual_saving)}</td></tr>`;
+  });
+  html+=`<tr style="font-weight:700;border-top:2px solid var(--ey-gray-300)">
+    <td>Total</td><td class="mono">${roles.reduce((s,r)=>s+r.baseline_fte,0).toFixed(0)}</td>
+    <td class="mono">${roles.reduce((s,r)=>s+r.future_fte,0).toFixed(0)}</td>
+    <td class="mono" style="color:var(--ey-red)">${totalReduction.toFixed(0)}</td><td></td><td></td>
+    <td class="mono" style="color:var(--ey-green)">${fmtC(totalSaving)}</td></tr>`;
+  html+=`</tbody></table></div></div>`;
+  // Reskilling paths
+  html+=`<div class="card" style="margin-top:16px"><div class="card-header"><h3>Reskilling Opportunities</h3><span class="tag tag-blue">Redeploy reduced FTE</span></div>
+    <div class="table-wrap"><table><thead><tr><th>From</th><th>To</th><th>Skills Required</th><th>Duration</th><th>Cost/Person</th></tr></thead><tbody>`;
+  const reskillPaths=[
+    {from:'Agent L1',to:'Agent L2',skills:'Advanced product, escalation handling',weeks:4,cost:3000},
+    {from:'Agent L1',to:'QA Analyst',skills:'QA methodology, analytics',weeks:6,cost:4000},
+    {from:'Agent L1',to:'Chat Specialist',skills:'Multi-chat handling, digital tone',weeks:2,cost:1500},
+    {from:'Agent L2',to:'Knowledge Manager',skills:'Content creation, taxonomy',weeks:4,cost:3500},
+    {from:'Back-Office',to:'RPA Manager',skills:'Process mapping, automation tools',weeks:8,cost:6000},
+    {from:'QA Analyst',to:'AI Trainer',skills:'ML concepts, labeling, model feedback',weeks:6,cost:5000},
+  ];
+  reskillPaths.forEach(p=>{
+    html+=`<tr><td>${p.from}</td><td style="font-weight:600">${p.to}</td><td style="font-size:12px">${p.skills}</td>
+      <td class="mono">${p.weeks} weeks</td><td class="mono">${fmtC(p.cost)}</td></tr>`;
+  });
+  html+=`</tbody></table></div></div>`;
+  wrap.innerHTML=html;
+}
+
+/* ═══ RISK REGISTER ═══ */
+function renderRisk(){
+  const wrap=document.getElementById('risk-content');
+  if(!_result?.risk_register){wrap.innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const rr=_result.risk_register;
+  const ratingColors={high:'tag-red',medium:'tag-yellow',low:'tag-green'};
+  const catColors={technology:'var(--ey-blue)',change:'var(--ey-orange)',process:'var(--ey-teal)',general:'var(--ey-gray-500)'};
+  // Summary
+  let html=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">
+    <div class="card" style="text-align:center"><div style="font-size:11px;color:var(--ey-gray-500)">Total Risks</div>
+      <div style="font-size:24px;font-weight:700">${rr.total_risks}</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--ey-red)"><div style="font-size:11px;color:var(--ey-gray-500)">High</div>
+      <div style="font-size:24px;font-weight:700;color:var(--ey-red)">${rr.high_risks}</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--ey-orange)"><div style="font-size:11px;color:var(--ey-gray-500)">Medium</div>
+      <div style="font-size:24px;font-weight:700;color:var(--ey-orange)">${rr.medium_risks}</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--ey-green)"><div style="font-size:11px;color:var(--ey-gray-500)">Low</div>
+      <div style="font-size:24px;font-weight:700;color:var(--ey-green)">${rr.low_risks}</div></div>
+  </div>`;
+  // Category summary
+  const cats=rr.category_summary||{};
+  if(Object.keys(cats).length){
+    html+=`<div class="card" style="margin-bottom:16px"><div class="card-header"><h3>Risk by Category</h3></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">`;
+    Object.entries(cats).forEach(([cat,info])=>{
+      html+=`<div style="flex:1;min-width:120px;padding:12px;border-radius:var(--radius);border:1px solid var(--ey-gray-200)">
+        <div style="font-size:12px;font-weight:600;color:${catColors[cat]||'var(--ey-gray-600)'};text-transform:capitalize">${cat}</div>
+        <div style="font-size:18px;font-weight:700;margin-top:4px">${info.count} risks</div>
+        <div style="font-size:11px;color:var(--ey-gray-500)">Avg: ${info.avg_score} · Max: ${info.max_score}</div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  }
+  // Risk table
+  html+=`<div class="card"><div class="card-header"><h3>Risk Register</h3></div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>ID</th><th>Initiative</th><th>Category</th><th>L</th><th>I</th><th>Score</th><th>Rating</th><th>Mitigation</th>
+    </tr></thead><tbody>`;
+  (rr.risks||[]).forEach(risk=>{
+    html+=`<tr><td class="mono" style="font-weight:600">${risk.id}</td>
+      <td>${risk.initiative}</td>
+      <td><span style="color:${catColors[risk.category]||'inherit'};text-transform:capitalize;font-weight:500">${risk.category}</span></td>
+      <td class="mono">${(risk.likelihood*100).toFixed(0)}%</td>
+      <td class="mono">${(risk.impact*100).toFixed(0)}%</td>
+      <td class="mono" style="font-weight:600">${risk.score}</td>
+      <td><span class="tag ${ratingColors[risk.rating]||'tag-gray'}">${risk.rating}</span></td>
+      <td style="font-size:12px;max-width:300px">${risk.mitigation}</td></tr>`;
+  });
+  html+=`</tbody></table></div></div>`;
+  wrap.innerHTML=html;
+}
+
+/* ═══ POOL UTILIZATION ═══ */
+function renderPools(){
+  if(!_result?.pool_snapshots){document.getElementById('pools-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const snaps=_result.pool_snapshots;
+  const leverNames={deflection:'Deflection',repeat_reduction:'Repeat Reduction',channel_shift:'Channel Shift',
+    aht_reduction:'AHT Reduction',acw_reduction:'ACW Reduction',concurrency_uplift:'Concurrency Uplift',
+    shrinkage_reduction:'Shrinkage Reduction',occupancy_uplift:'Occupancy Uplift',schedule_efficiency:'Schedule Efficiency'};
+  let html='';
+  // Stepped realization callout
+  html+=`<div class="card" style="border-left:4px solid var(--ey-yellow)">
+    <h3 style="font-size:14px;margin-bottom:8px">Stepped Realization Model</h3>
+    <p style="font-size:12px;color:var(--ey-gray-600);margin-bottom:8px">Each successive initiative consuming from the same lever gets a reduced realization factor, reflecting diminishing marginal returns.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${_steppedRealization.map((r,i)=>
+      `<div style="padding:6px 14px;background:${r>=0.7?'#E6F5EB':r>=0.5?'#FFF9CC':'var(--ey-gray-100)'};border-radius:var(--radius);font-size:13px;font-weight:600">
+        Initiative #${i+1}: <span style="font-family:var(--font-mono)">${(r*100).toFixed(0)}%</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+  // Per-year pool tables
+  snaps.forEach(snap=>{
+    const pools=snap.pools;
+    if(!Object.keys(pools).length) return;
+    html+=`<div class="card"><div class="card-header"><h3>Year ${snap.year}</h3></div>`;
+    html+=`<div class="table-wrap"><table><thead><tr><th>Lever</th><th>Pool Ceiling (FTE)</th><th>Consumed (FTE)</th><th>Remaining (FTE)</th><th>Utilization</th><th># Initiatives</th></tr></thead><tbody>`;
+    Object.entries(pools).forEach(([lever,p])=>{
+      const util=p.utilization_pct;
+      const barColor=util>80?'var(--ey-red)':util>50?'var(--ey-orange)':'var(--ey-green)';
+      html+=`<tr>
+        <td style="font-weight:600">${leverNames[lever]||lever}</td>
+        <td class="mono">${p.ceiling_fte.toFixed(1)}</td>
+        <td class="mono">${p.consumed_fte.toFixed(1)}</td>
+        <td class="mono">${p.remaining_fte.toFixed(1)}</td>
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;height:8px;background:var(--ey-gray-100);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(util,100)}%;background:${barColor};border-radius:4px"></div>
+          </div>
+          <span class="mono" style="font-size:12px;min-width:40px">${util.toFixed(0)}%</span>
+        </div></td>
+        <td class="mono" style="text-align:center">${p.initiatives_consuming}</td>
+      </tr>`;
+    });
+    html+=`</tbody></table></div></div>`;
+  });
+  document.getElementById('pools-content').innerHTML=html;
+}
+
+/* ═══ ROLE BREAKDOWN ═══ */
+function renderRoles(){
+  if(!_result?.summary?.role_breakdown){document.getElementById('roles-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const roles=_result.summary.role_breakdown;
+  const attrition=_result.summary.attrition_timeline;
+  let html='';
+  // Role table
+  html+=`<div class="card"><div class="card-header"><h3>FTE by Role</h3><span class="tag tag-blue">${roles.length} roles</span></div>`;
+  html+=`<div class="table-wrap"><table><thead><tr><th>Role</th><th>Baseline FTE</th><th>Future FTE</th><th>Reduction</th><th>% Change</th><th>Cost/FTE</th><th>Annual Saving</th></tr></thead><tbody>`;
+  let totalBaseline=0,totalFuture=0,totalReduction=0,totalSaving=0;
+  roles.forEach(r=>{
+    totalBaseline+=r.baseline_fte;totalFuture+=r.future_fte;totalReduction+=r.reduction;totalSaving+=r.annual_saving;
+    const rColor=r.pct_reduction>20?'var(--ey-red)':r.pct_reduction>10?'var(--ey-orange)':'var(--ey-green)';
+    html+=`<tr>
+      <td style="font-weight:600">${r.role}</td>
+      <td class="mono">${r.baseline_fte.toFixed(1)}</td>
+      <td class="mono">${r.future_fte.toFixed(1)}</td>
+      <td class="mono" style="color:${rColor}">${r.reduction>0?'-':''}${r.reduction.toFixed(1)}</td>
+      <td class="mono">${r.pct_reduction.toFixed(1)}%</td>
+      <td class="mono">$${r.cost_per_fte.toLocaleString()}</td>
+      <td class="mono" style="color:var(--ey-green)">$${r.annual_saving.toLocaleString()}</td>
+    </tr>`;
+  });
+  html+=`<tr style="font-weight:700;border-top:2px solid var(--ey-gray-300)">
+    <td>Total</td><td class="mono">${totalBaseline.toFixed(1)}</td><td class="mono">${totalFuture.toFixed(1)}</td>
+    <td class="mono">-${totalReduction.toFixed(1)}</td><td class="mono">${(totalReduction/Math.max(totalBaseline,1)*100).toFixed(1)}%</td>
+    <td></td><td class="mono" style="color:var(--ey-green)">$${totalSaving.toLocaleString()}</td></tr>`;
+  html+=`</tbody></table></div></div>`;
+  // Attrition timeline
+  if(attrition&&attrition.months&&attrition.months.length){
+    html+=`<div class="card"><div class="card-header"><h3>Natural Attrition Timeline</h3>`;
+    if(attrition.crossover_month){
+      html+=`<span class="tag tag-green">Crossover at Month ${attrition.crossover_month}</span>`;
+    } else {
+      html+=`<span class="tag tag-red">Natural attrition insufficient — involuntary action needed</span>`;
+    }
+    html+=`</div>`;
+    html+=`<div style="font-size:12px;color:var(--ey-gray-600);margin-bottom:12px">Shows when cumulative natural attrition meets the required FTE reduction, avoiding involuntary separation.</div>`;
+    // Show key milestones
+    const milestones=[6,12,18,24,30,36].filter(m=>m<=attrition.months.length);
+    html+=`<div style="display:grid;grid-template-columns:repeat(${Math.min(milestones.length,6)},1fr);gap:8px">`;
+    milestones.forEach(m=>{
+      const d=attrition.months[m-1];
+      const met=d.cumulative_attrition>=d.required_reduction;
+      html+=`<div style="padding:10px;background:${met?'#E6F5EB':'var(--ey-gray-50)'};border-radius:var(--radius);text-align:center;border:1px solid ${met?'var(--ey-green)':'var(--ey-gray-200)'}">
+        <div style="font-size:11px;color:var(--ey-gray-500)">Month ${m}</div>
+        <div style="font-size:16px;font-weight:700;font-family:var(--font-mono)">${d.cumulative_attrition.toFixed(0)}</div>
+        <div style="font-size:11px;color:${met?'var(--ey-green)':'var(--ey-red)'}">${met?'✓ Met':d.gap.toFixed(0)+' gap'}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+    html+=`<div style="margin-top:8px;font-size:11px;color:var(--ey-gray-400)">Required reduction: ${attrition.months[0]?.required_reduction.toFixed(0)} FTE</div>`;
+    html+=`</div>`;
+  }
+  document.getElementById('roles-content').innerHTML=html;
+}
+
+/* ═══ RISK REGISTER ═══ */
+function renderRisk(){
+  if(!_result?.risk_register){document.getElementById('risk-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const rr=_result.risk_register;
+  let html='';
+  // Summary cards
+  html+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="text-align:center"><div style="font-size:24px;font-weight:700">${rr.total_risks}</div><div style="font-size:12px;color:var(--ey-gray-500)">Total Risks</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--ey-red)"><div style="font-size:24px;font-weight:700;color:var(--ey-red)">${rr.high_risks}</div><div style="font-size:12px;color:var(--ey-gray-500)">High</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--ey-orange)"><div style="font-size:24px;font-weight:700;color:var(--ey-orange)">${rr.medium_risks}</div><div style="font-size:12px;color:var(--ey-gray-500)">Medium</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--ey-green)"><div style="font-size:24px;font-weight:700;color:var(--ey-green)">${rr.low_risks}</div><div style="font-size:12px;color:var(--ey-gray-500)">Low</div></div>
+  </div>`;
+  // Category summary
+  if(rr.category_summary){
+    html+=`<div class="card"><div class="card-header"><h3>Risk by Category</h3></div>`;
+    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">`;
+    Object.entries(rr.category_summary).forEach(([cat,info])=>{
+      html+=`<div style="padding:10px;background:var(--ey-gray-50);border-radius:var(--radius);border:1px solid var(--ey-gray-200)">
+        <div style="font-weight:600;text-transform:capitalize;margin-bottom:4px">${cat}</div>
+        <div style="font-size:12px;color:var(--ey-gray-600)">${info.count} risks · Avg score: ${info.avg_score} · Max: ${info.max_score}</div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  }
+  // Risk table
+  html+=`<div class="card"><div class="card-header"><h3>Risk Register</h3></div>`;
+  html+=`<div class="table-wrap"><table><thead><tr><th>ID</th><th>Initiative</th><th>Category</th><th>L</th><th>I</th><th>Score</th><th>Rating</th><th>Mitigation</th></tr></thead><tbody>`;
+  (rr.risks||[]).forEach(r=>{
+    const ratingColor={high:'tag-red',medium:'tag-yellow',low:'tag-green'}[r.rating]||'tag-gray';
+    html+=`<tr>
+      <td class="mono">${r.id}</td>
+      <td style="font-weight:500;max-width:180px">${r.initiative}</td>
+      <td><span class="tag tag-blue" style="text-transform:capitalize">${r.category}</span></td>
+      <td class="mono">${(r.likelihood*100).toFixed(0)}%</td>
+      <td class="mono">${(r.impact*100).toFixed(0)}%</td>
+      <td class="mono" style="font-weight:700">${r.score}</td>
+      <td><span class="tag ${ratingColor}" style="text-transform:capitalize">${r.rating}</span></td>
+      <td style="font-size:11px;max-width:300px;color:var(--ey-gray-600)">${r.mitigation}</td>
+    </tr>`;
+  });
+  html+=`</tbody></table></div></div>`;
+  document.getElementById('risk-content').innerHTML=html;
+}
+
+/* ═══ QUEUE DETAILS ═══ */
+function renderDetails(){
+  if(!_result?.yearly_data){document.getElementById('details-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const y1=_result.yearly_data[0];
+  if(!y1?.queue_details?.length){document.getElementById('details-content').innerHTML='<div class="empty-state"><h3>No queue details</h3></div>';return}
+  const active=y1.active_steps||[];
+  const stepLabels={automation_ai:'FTE (Auto)',opmodel:'FTE (OpMod)',location:'Cost (Loc)'};
+  // Build dynamic header
+  let hdr='<th>BU</th><th>Queue</th><th>Ch</th><th>Vol (Base)</th><th>AHT (Base)</th><th>FTE (Base)</th>';
+  active.forEach(s=>{hdr+=`<th>${stepLabels[s]||s}</th>`});
+  hdr+='<th>Cost (Base)</th><th>Cost (Final)</th>';
+  let html=`<div class="table-wrap"><table>
+    <thead><tr>${hdr}</tr></thead>
+    <tbody>${y1.queue_details.map(q=>{
+      let row=`<td>${q.bu}</td><td style="font-weight:600">${q.queue}</td>
+      <td><span class="tag tag-blue">${q.channel}</span></td>
+      <td class="mono">${fmtN(q.baseline.volume)}</td>
+      <td class="mono">${q.baseline.aht.toFixed(1)}m</td>
+      <td class="mono">${q.baseline.fte.toFixed(1)}</td>`;
+      active.forEach(s=>{
+        const sr=q.step_results?.[s];
+        if(s==='location'){
+          row+=`<td class="mono">${sr?fmt(sr.location_saving)+'/mo':'—'}</td>`;
+        } else {
+          row+=`<td class="mono">${sr?sr.fte.toFixed(1):'—'}</td>`;
+        }
+      });
+      row+=`<td class="mono">${fmt(q.baseline_cost_monthly)}/mo</td><td class="mono" style="color:var(--ey-green)">${fmt(q.final_cost_monthly)}/mo</td>`;
+      return `<tr>${row}</tr>`;
+    }).join('')}</tbody></table></div>`;
+  document.getElementById('details-content').innerHTML=html;
+}
+
+/* ═══ RECOMMENDATIONS ═══ */
+function renderRecs(){
+  if(!_result?.recommendations){document.getElementById('recs-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const recs=_result.recommendations;
+  if(!recs.length){document.getElementById('recs-content').innerHTML='<div class="empty-state"><div class="empty-icon">🎯</div><h3>No Gaps Found</h3><p>All KPIs are within benchmark range.</p></div>';return}
+  document.getElementById('recs-content').innerHTML=`<div class="table-wrap"><table>
+    <thead><tr><th>KPI Gap</th><th>Severity</th><th>Recommended Initiative</th><th>Lever</th><th>Impact</th><th>Complexity</th></tr></thead>
+    <tbody>${recs.map(r=>`<tr>
+      <td style="font-weight:600">${r.gap}</td>
+      <td><span class="severity-${r.severity}">${r.severity}</span></td>
+      <td>${r.initiative}</td>
+      <td><span class="tag tag-blue">${r.lever.replace('_',' ')}</span></td>
+      <td class="mono">${(r.impact*100).toFixed(0)}%</td>
+      <td><span class="tag ${{low:'tag-green',medium:'tag-yellow',high:'tag-red'}[r.complexity]||'tag-gray'}">${r.complexity}</span></td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ═══ VALIDATION ═══ */
+function renderValidation(){
+  if(!_result?.validation){document.getElementById('validation-content').innerHTML='<div class="empty-state"><h3>Run model first</h3></div>';return}
+  const v=_result.validation;
+  let html=`<div class="metrics-row">
+    <div class="metric-card ${v.warning_count===0?'green':'red'}"><div class="metric-label">Warnings</div><div class="metric-value">${v.warning_count}</div></div>
+    <div class="metric-card ${v.has_queues?'green':'red'}"><div class="metric-label">Queues</div><div class="metric-value">${v.has_queues?'✓':'✗'}</div></div>
+    <div class="metric-card ${v.has_initiatives?'green':'red'}"><div class="metric-label">Initiatives</div><div class="metric-value">${v.has_initiatives?'✓':'✗'}</div></div>
+    <div class="metric-card ${v.has_technology?'green':'red'}"><div class="metric-label">Technology</div><div class="metric-value">${v.has_technology?'✓':'✗'}</div></div>
+  </div>`;
+  if(v.warnings.length){
+    html+=`<div class="card"><div class="card-header"><h3>Warnings</h3></div>
+    ${v.warnings.map(w=>`<div style="padding:8px 12px;border-left:3px solid var(--ey-orange);background:var(--ey-gray-50);margin-bottom:6px;border-radius:0 var(--radius) var(--radius) 0;font-size:13px">⚠️ ${w}</div>`).join('')}
+    </div>`;
+  } else {
+    html+=`<div class="card" style="text-align:center;padding:32px"><div style="font-size:36px;margin-bottom:8px">✅</div><h3>All Checks Passed</h3></div>`;
+  }
+  document.getElementById('validation-content').innerHTML=html;
+}
+
+/* ═══ EXPORT ═══ */
+function exportExcel(){
+  if(!_result){toast('Run model first','error');return}
+  window.open(API+'/api/export/excel','_blank');
+}
+
+/* ═══ MODAL HELPERS ═══ */
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+/* ═══ BOOT ═══ */
+init();
+</script>
+</body>
+</html>
