@@ -1143,44 +1143,53 @@ async function init(){
   try{const rpc=await fetch(API+'/api/process-config');const pc=await rpc.json();
     _procComplexityDefaults=pc.complexity_defaults||{};_poolTypes=pc.pool_types||[];_steppedRealization=pc.stepped_realization||[0.9,0.75,0.6,0.45];
   }catch(e){console.warn('Process config not loaded',e)}
+  // Render all visible sections
+  try{renderBUs()}catch(e){}
+  try{renderQueues()}catch(e){}
+  try{renderKPIs()}catch(e){}
+  try{renderInits('auto')}catch(e){}
+  try{renderInits('opmodel')}catch(e){}
+  try{renderLocMoves()}catch(e){}
+  try{renderTech()}catch(e){}
 }
 
 function loadEnterpriseUI(){
   if(!_enterprise)return;
-  document.getElementById('ent-name').value=_enterprise.program_name||'';
-  document.getElementById('ent-horizon').value=_enterprise.planning_horizon_years||3;
-  document.getElementById('ent-growth').value=(_enterprise.global_volume_growth_pct||0.02)*100;
-  document.getElementById('ent-inflation').value=(_enterprise.global_wage_inflation_pct||0.03)*100;
-  document.getElementById('ent-discount').value=(_enterprise.discount_rate||0.10)*100;
-  document.getElementById('ent-attrition').value=(_enterprise.attrition_rate_monthly||0.03)*100;
-  document.getElementById('ent-redeploy').value=(_enterprise.redeployment_pct||0.10)*100;
-  document.getElementById('ent-currency').value=_enterprise.currency||'USD';
-  document.getElementById('ent-fte').value=_enterprise.enterprise_fte||0;
-  const lm=_enterprise.location_mix||{};
+  const e=_enterprise;
+  document.getElementById('ent-name').value=e.program_name||'';
+  document.getElementById('ent-horizon').value=e.planning_horizon_years??3;
+  document.getElementById('ent-growth').value=((e.global_volume_growth_pct??0.02)*100);
+  document.getElementById('ent-inflation').value=((e.global_wage_inflation_pct??0.03)*100);
+  document.getElementById('ent-discount').value=((e.discount_rate??0.10)*100);
+  document.getElementById('ent-attrition').value=((e.attrition_rate_monthly??0.03)*100);
+  document.getElementById('ent-redeploy').value=((e.redeployment_pct??0.10)*100);
+  document.getElementById('ent-currency').value=e.currency||'USD';
+  document.getElementById('ent-fte').value=e.enterprise_fte??0;
+  const lm=e.location_mix||{};
   document.querySelectorAll('.loc-fte').forEach(inp=>{
-    const l=inp.dataset.loc;inp.value=lm[l]?.fte||0;
+    const l=inp.dataset.loc;inp.value=lm[l]?.fte??0;
   });
   calcLocPct();
-  const sr=_enterprise.salary_rates||{};
-  document.getElementById('sal-onshore').value=sr.onshore||60000;
-  document.getElementById('sal-nearshore').value=sr.nearshore||30000;
-  document.getElementById('sal-offshore').value=sr.offshore||18000;
-  document.getElementById('sal-3rdparty').value=sr['3rd_party']||45000;
+  const sr=e.salary_rates||{};
+  document.getElementById('sal-onshore').value=sr.onshore??60000;
+  document.getElementById('sal-nearshore').value=sr.nearshore??30000;
+  document.getElementById('sal-offshore').value=sr.offshore??18000;
+  document.getElementById('sal-3rdparty').value=sr['3rd_party']??45000;
   // CX Revenue
-  const cx=_enterprise.cx_revenue||{};
-  document.getElementById('cx-customer-base').value=cx.customer_base||0;
-  document.getElementById('cx-rev-per-cust').value=cx.revenue_per_customer||0;
-  document.getElementById('cx-churn-rate').value=(cx.annual_churn_rate_pct||0.12)*100;
-  document.getElementById('cx-csat-baseline').value=cx.csat_baseline||3.5;
-  document.getElementById('cx-csat-target').value=cx.csat_target||4.2;
-  document.getElementById('cx-fcr-baseline').value=(cx.fcr_baseline_pct||0.70)*100;
-  document.getElementById('cx-fcr-target').value=(cx.fcr_target_pct||0.82)*100;
+  const cx=e.cx_revenue||{};
+  document.getElementById('cx-customer-base').value=cx.customer_base??0;
+  document.getElementById('cx-rev-per-cust').value=cx.revenue_per_customer??0;
+  document.getElementById('cx-churn-rate').value=((cx.annual_churn_rate_pct??0.12)*100);
+  document.getElementById('cx-csat-baseline').value=cx.csat_baseline??3.5;
+  document.getElementById('cx-csat-target').value=cx.csat_target??4.2;
+  document.getElementById('cx-fcr-baseline').value=((cx.fcr_baseline_pct??0.70)*100);
+  document.getElementById('cx-fcr-target').value=((cx.fcr_target_pct??0.82)*100);
   // Implementation Costs
-  const impl=_enterprise.implementation_costs||{};
-  document.getElementById('impl-change-mgmt').value=impl.change_management||0;
-  document.getElementById('impl-training').value=impl.training||0;
-  document.getElementById('impl-integration').value=impl.integration||0;
-  document.getElementById('impl-contingency').value=(impl.contingency_pct||0.10)*100;
+  const impl=e.implementation_costs||{};
+  document.getElementById('impl-change-mgmt').value=impl.change_management??0;
+  document.getElementById('impl-training').value=impl.training??0;
+  document.getElementById('impl-integration').value=impl.integration??0;
+  document.getElementById('impl-contingency').value=((impl.contingency_pct??0.10)*100);
   renderWaterfallOrder();
 }
 
@@ -1407,12 +1416,12 @@ function openBUModal(bu){
     document.getElementById('bu-name').value=bu.bu_name;
     document.getElementById('bu-cost').value=bu.cost_per_fte;
     document.getElementById('bu-hours').value=bu.paid_hours_per_fte;
-    document.getElementById('bu-shrink').value=(bu.shrinkage_pct||0.30)*100;
-    document.getElementById('bu-occ-voice').value=(bu.occupancy_voice||0.82)*100;
-    document.getElementById('bu-occ-chat').value=(bu.occupancy_chat||0.78)*100;
-    document.getElementById('bu-fte').value=bu.current_fte||0;
-    document.getElementById('bu-growth').value=(bu.bu_growth_rate||0.02)*100;
-    document.getElementById('bu-attrition').value=(bu.bu_attrition_rate||0.03)*100;
+    document.getElementById('bu-shrink').value=(bu.shrinkage_pct??0.30)*100;
+    document.getElementById('bu-occ-voice').value=(bu.occupancy_voice??0.82)*100;
+    document.getElementById('bu-occ-chat').value=(bu.occupancy_chat??0.78)*100;
+    document.getElementById('bu-fte').value=bu.current_fte??0;
+    document.getElementById('bu-growth').value=(bu.bu_growth_rate??0.02)*100;
+    document.getElementById('bu-attrition').value=(bu.bu_attrition_rate??0.03)*100;
     populateBUModalCheckboxes(bu.channels, bu.processes);
   } else {
     document.getElementById('bu-name').value='';
@@ -1534,8 +1543,8 @@ function renderBUs(){
   if(!_bus.length){wrap.innerHTML='';empty.style.display='';return}
   empty.style.display='none';
   // FTE validation
-  const entFTE=_enterprise.enterprise_fte||0;
-  const buFTE=_bus.reduce((s,b)=>s+(b.current_fte||0),0);
+  const entFTE=_enterprise.enterprise_fte??0;
+  const buFTE=_bus.reduce((s,b)=>s+(b.current_fte??0),0);
   let banner='';
   if(entFTE>0 && Math.abs(entFTE-buFTE)>1){
     banner=`<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
@@ -1557,7 +1566,7 @@ function renderBUs(){
           <div style="display:flex;gap:8px;margin-top:6px">
             <span class="tag tag-blue">${qCount} queues</span>
             <span class="tag tag-yellow">${fmtN(totalVol)} contacts/mo</span>
-            <span class="tag tag-green">${bu.current_fte||0} FTE</span>
+            <span class="tag tag-green">${bu.current_fte??0} FTE</span>
             <span class="tag tag-gray">${fmt(bu.cost_per_fte)}/FTE</span>
           </div>
         </div>
@@ -1835,16 +1844,16 @@ function openInitModal(type,editInit){
     ?(type==='auto'?'Edit Automation & AI Initiative':'Edit Operating Model Initiative')
     :(type==='auto'?'Custom Automation & AI Initiative':'Custom Operating Model Initiative');
   document.getElementById('init-name').value=editInit?editInit.name:'';
-  document.getElementById('init-adoption').value=editInit?((editInit.adoption_pct||0.8)*100).toFixed(0):'80';
+  document.getElementById('init-adoption').value=editInit?((editInit.adoption_pct??0.8)*100).toFixed(0):'80';
   document.getElementById('init-start').value=editInit?editInit.start_month:1;
   document.getElementById('init-end').value=editInit?editInit.end_month:12;
   document.getElementById('init-wave').value=editInit?editInit.wave:1;
   document.getElementById('init-complexity').value=editInit?editInit.complexity:'medium';
   document.getElementById('init-desc').value=editInit?editInit.description:'';
   // Ramp fields
-  document.getElementById('init-ramp1').value=editInit?((editInit.ramp_year1||0.4)*100).toFixed(0):'40';
-  document.getElementById('init-ramp2').value=editInit?((editInit.ramp_year2||0.8)*100).toFixed(0):'80';
-  document.getElementById('init-ramp3').value=editInit?((editInit.ramp_year3||1.0)*100).toFixed(0):'100';
+  document.getElementById('init-ramp1').value=editInit?((editInit.ramp_year1??0.4)*100).toFixed(0):'40';
+  document.getElementById('init-ramp2').value=editInit?((editInit.ramp_year2??0.8)*100).toFixed(0):'80';
+  document.getElementById('init-ramp3').value=editInit?((editInit.ramp_year3??1.0)*100).toFixed(0):'100';
   // Build levers UI
   const levers=editInit?.levers||[];
   if(levers.length){

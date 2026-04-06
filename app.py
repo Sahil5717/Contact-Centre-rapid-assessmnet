@@ -1793,7 +1793,7 @@ def put_init(init_type, iid):
     d = request.json or {}
     key = 'initiatives_auto' if init_type == 'auto' else 'initiatives_opmodel'
     for init in _get_store().get(key, []):
-        if init['id'] == iid:
+        if init.get('id') == iid:
             for k, v in d.items():
                 if k != 'id': init[k] = v
             return jsonify(init)
@@ -1802,7 +1802,7 @@ def put_init(init_type, iid):
 @app.route('/api/initiatives/<init_type>/<iid>', methods=['DELETE'])
 def del_init(init_type, iid):
     e = _get_store(); key = 'initiatives_auto' if init_type == 'auto' else 'initiatives_opmodel'
-    e[key] = [i for i in e.get(key, []) if i['id'] != iid]; return jsonify({'ok': True})
+    e[key] = [i for i in e.get(key, []) if i.get('id') != iid]; return jsonify({'ok': True})
 
 @app.route('/api/location-strategy', methods=['GET'])
 def get_loc(): return jsonify(_get_store().get('location_strategy', []))
@@ -1921,38 +1921,38 @@ def load_rheem_demo():
     e['business_units'] = bus
     # 6 Automation & AI — target: 88/311 in-house + 38/213 3rd party
     e['initiatives_auto'] = [
-        {'name':'Intelligent Document Processing (IDP)',
+        {'id':_uid(),'name':'Intelligent Document Processing (IDP)',
          'levers':[{'lever':'aht_reduction','process_impacts':{'orders':0.15}}],
          'eligible_channels':['voice'],'complexity':'medium',
          'description':'80% efficiency on orders (Img4 r18)',
          'ramp_year1':0.30,'ramp_year2':0.65,'ramp_year3':0.80,'adoption_pct':0.80,
          'risk_category':'technology','risk_likelihood':0.3,'risk_impact':0.3},
-        {'name':'Self Service IVR NLP Automation',
+        {'id':_uid(),'name':'Self Service IVR NLP Automation',
          'levers':[{'lever':'deflection','process_impacts':{'_all':0.20}},
                    {'lever':'aht_reduction','process_impacts':{'_all':0.12}}],
          'eligible_channels':['voice'],'complexity':'high',
          'description':'20% deflection + AHT save (Img4 r6,16)',
          'ramp_year1':0.15,'ramp_year2':0.28,'ramp_year3':0.28,'adoption_pct':0.55,
          'risk_category':'technology','risk_likelihood':0.4,'risk_impact':0.5},
-        {'name':'Self Service Live Chat',
+        {'id':_uid(),'name':'Self Service Live Chat',
          'levers':[{'lever':'deflection','process_impacts':{'_all':0.08}}],
          'eligible_channels':['voice'],'complexity':'medium',
          'description':'8% deflection to chat (Img4 r7)',
          'ramp_year1':0.30,'ramp_year2':0.55,'ramp_year3':0.75,'adoption_pct':0.80,
          'risk_category':'change','risk_likelihood':0.3,'risk_impact':0.4},
-        {'name':'Self Service Virtual Assistant',
+        {'id':_uid(),'name':'Self Service Virtual Assistant',
          'levers':[{'lever':'deflection','process_impacts':{'_all':0.22}}],
          'eligible_channels':['voice'],'complexity':'high',
          'description':'VA ramp 0/10/22/30/30% (Img4 r11-15)',
          'ramp_year1':0.02,'ramp_year2':0.12,'ramp_year3':0.28,'adoption_pct':0.38,
          'risk_category':'technology','risk_likelihood':0.4,'risk_impact':0.6},
-        {'name':'Agent Assist & Knowledge Management',
+        {'id':_uid(),'name':'Agent Assist & Knowledge Management',
          'levers':[{'lever':'aht_reduction','process_impacts':{'_all':0.12}}],
          'eligible_channels':['voice'],'complexity':'medium',
          'description':'AHT 7.5/20/20/20/20% (Img4 r24-28)',
          'ramp_year1':0.35,'ramp_year2':0.75,'ramp_year3':1.00,'adoption_pct':0.20,
          'risk_category':'technology','risk_likelihood':0.3,'risk_impact':0.4},
-        {'name':'Intelligent Call Summarization',
+        {'id':_uid(),'name':'Intelligent Call Summarization',
          'levers':[{'lever':'acw_reduction','process_impacts':{'_all':0.25}}],
          'eligible_channels':['voice'],'complexity':'low',
          'description':'0.5 min save (Img5 r29)',
@@ -1968,6 +1968,8 @@ def load_rheem_demo():
         _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Cross-Skilling' in i['name'])),
         _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Quality' in i['name'])),
     ]
+    for init in e['initiatives_opmodel']:
+        init['id'] = _uid()
     # Location: Tech Support + Warranty → Nearshore (Image 7)
     e['location_strategy'] = [
         {'id':_uid(),'from_location':'onshore','to_location':'nearshore',
