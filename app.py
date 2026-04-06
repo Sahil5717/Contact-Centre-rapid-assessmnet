@@ -489,6 +489,7 @@ def apply_initiatives_pooled(queue, initiatives, month, pools, enterprise_pools)
     For each initiative × lever:
     1. Check pool ceiling — if exhausted, skip
     2. Apply stepped realization factor (90%/75%/60%/45%...)
+       CRITICAL: Factor is set per DISTINCT initiative on a lever, NOT per queue application
     3. Consume from pool
     4. Apply the realized impact to queue state
     """
@@ -533,8 +534,14 @@ def apply_initiatives_pooled(queue, initiatives, month, pools, enterprise_pools)
             if pool['remaining_fte'] <= 0 and lever not in ['occupancy_uplift', 'schedule_efficiency']:
                 continue  # pool exhausted
 
-            # Stepped realization
-            n = pool['initiatives_consuming']
+            # FIX: Use ordered list (not set) for deterministic initiative sequencing.
+            # The Nth distinct initiative on this lever gets the Nth realization factor.
+            if '_initiative_order' not in pool:
+                pool['_initiative_order'] = []
+            init_name = init.get('name', str(id(init)))
+            if init_name not in pool['_initiative_order']:
+                pool['_initiative_order'].append(init_name)
+            n = pool['_initiative_order'].index(init_name)
             realization = _realization_factor(n)
             realized_impact = raw_impact * realization
 
@@ -604,7 +611,7 @@ def apply_initiatives_pooled(queue, initiatives, month, pools, enterprise_pools)
                 consumed_contacts = d if lever == 'deflection' else (rr if lever == 'repeat_reduction' else (s if lever == 'channel_shift' else 0))
                 pool['consumed_contacts'] = round(pool.get('consumed_contacts', 0) + consumed_contacts, 0)
                 pool['remaining_contacts'] = round(pool.get('ceiling_contacts', 0) - pool.get('consumed_contacts', 0), 0)
-            pool['initiatives_consuming'] = pool.get('initiatives_consuming', 0) + 1
+            pool['initiatives_consuming'] = len(pool.get('_initiative_order', []))
 
     # Recalculate FTE from new state
     total_ht_hrs = (ht + acw) / 60.0
@@ -668,6 +675,9 @@ def apply_location_savings(queue_state, location_moves, queue, salary_rates, bu_
         blended_before = bu_cost
     cost_before = fte * blended_before / 12
     fte_after = dict(fte_before)
+
+    # Track whether any move actually applied to this queue
+    any_move_applied = False
     for move in location_moves:
         mp = move.get('processes', ['all']); mc = move.get('channels', ['all'])
         if 'all' not in mp and queue.get('process_tag', '') not in mp: continue
@@ -675,10 +685,23 @@ def apply_location_savings(queue_state, location_moves, queue, salary_rates, bu_
         from_loc = move.get('from_location', 'onshore')
         to_loc = move.get('to_location', 'nearshore')
         move_pct = move.get('move_pct', 0)
+        if move_pct <= 0: continue
         available = fte_after.get(from_loc, 0)
+        if available <= 0: continue
         moved = round(available * move_pct, 2)
         fte_after[from_loc] = round(max(available - moved, 0), 2)
         fte_after[to_loc] = round(fte_after.get(to_loc, 0) + moved, 2)
+        any_move_applied = True
+
+    # CRITICAL FIX: If no move applied, location step must be cost-neutral
+    if not any_move_applied:
+        fte_before_clean = {k: v for k, v in fte_before.items() if v > 0}
+        return {'fte': fte, 'cost_before': round(cost_before, 0), 'cost_after': round(cost_before, 0),
+                'location_saving': 0,
+                'effective_cost_per_fte': round(blended_before, 0),
+                'blended_before': round(blended_before, 0),
+                'fte_by_location_before': fte_before_clean, 'fte_by_location_after': fte_before_clean}
+
     total_after = sum(fte_after.values())
     if total_after > 0:
         blended_after = sum((fte_after.get(loc, 0) / total_after) * salary_rates.get(loc, 55000)
@@ -699,16 +722,27 @@ def apply_location_savings(queue_state, location_moves, queue, salary_rates, bu_
 # FINANCIALS (IRR, CX Revenue, Cost of Inaction, Sensitivity, Scenarios)
 # ═══════════════════════════════════════════════════════
 def _calc_irr(cash_flows, max_iter=200, tol=1e-7):
-    if not cash_flows or all(c == 0 for c in cash_flows): return 0
+    if not cash_flows or all(c == 0 for c in cash_flows): return None
+    # Guard: need at least one sign change
+    signs = [1 if c >= 0 else -1 for c in cash_flows if c != 0]
+    if len(set(signs)) < 2: return None  # no sign change = no meaningful IRR
     r = 0.10
     for _ in range(max_iter):
         npv = sum(cf / (1 + r) ** t for t, cf in enumerate(cash_flows))
         dnpv = sum(-t * cf / (1 + r) ** (t + 1) for t, cf in enumerate(cash_flows))
         if abs(dnpv) < 1e-12: break
         r_new = r - npv / dnpv
-        if abs(r_new - r) < tol: return round(r_new * 100, 1)
+        if abs(r_new - r) < tol:
+            result = round(r_new * 100, 1)
+            # Guard: suppress economically meaningless IRR
+            if result > 500 or result < -100:
+                return None
+            return result
         r = r_new
-    return round(r * 100, 1)
+    result = round(r * 100, 1)
+    if result > 500 or result < -100:
+        return None
+    return result
 
 def _calc_cost_of_inaction(enterprise, horizon_years):
     growth = enterprise.get('global_volume_growth_pct', 0.02)
@@ -1031,18 +1065,27 @@ def run_waterfall(enterprise):
         growth_factor = (1 + growth_pct) ** year
         inflation_factor = (1 + inflation_pct) ** year
 
-        # Reset pools per year (initiatives accumulate across queues but reset each year for yearly reporting)
+        # Reset pools per year — scale ceilings by volume growth so future years
+        # have proportionally larger addressable opportunity
         year_pools = copy.deepcopy(enterprise_pools)
+        for lever, pool in year_pools.items():
+            pool['ceiling_fte'] = round(pool['ceiling_fte'] * growth_factor, 2)
+            pool['ceiling_contacts'] = round(pool.get('ceiling_contacts', 0) * growth_factor, 0)
+            pool['remaining_fte'] = pool['ceiling_fte']
+            pool['remaining_contacts'] = pool['ceiling_contacts']
 
         for idx, (bu, q) in enumerate(all_queues):
             grown_q = copy.deepcopy(q)
             grown_q['monthly_volume'] = round(q['monthly_volume'] * growth_factor)
-            baseline = calc_queue_baseline(q)
-            scaled_baseline_fte = fixed_baseline_ftes[idx]
-            baseline['fte'] = scaled_baseline_fte
+
+            # FIX: Baseline for this YEAR must reflect grown volume, not Year-0
+            grown_baseline = calc_queue_baseline(grown_q)
+            # Scale to enterprise FTE (proportional to Year-0 scaling, then grown)
+            scaled_baseline_fte = round(fixed_baseline_ftes[idx] * growth_factor, 2)
+            grown_baseline['fte'] = scaled_baseline_fte
 
             step_results = {}
-            prev_state = baseline
+            prev_state = grown_baseline
             prev_fte = scaled_baseline_fte
             effective_cost = blended_baseline_cost
 
@@ -1093,19 +1136,19 @@ def run_waterfall(enterprise):
                     step_results['location'] = loc
                     effective_cost = loc['effective_cost_per_fte']
 
-            baseline_cost_monthly = baseline['fte'] * blended_baseline_cost * inflation_factor / 12
+            baseline_cost_monthly = grown_baseline['fte'] * blended_baseline_cost * inflation_factor / 12
             final_cost_monthly = prev_fte * effective_cost * inflation_factor / 12
 
             year_queues.append({
                 'bu': bu['bu_name'], 'queue': q['queue_name'], 'channel': q['channel'],
-                'process': q.get('process_tag', ''), 'year': year, 'baseline': baseline,
+                'process': q.get('process_tag', ''), 'year': year, 'baseline': grown_baseline,
                 'step_results': step_results, 'baseline_cost_monthly': round(baseline_cost_monthly, 0),
                 'final_cost_monthly': round(final_cost_monthly, 0),
                 'waterfall_order': waterfall_order, 'active_steps': active_steps
             })
 
-        # Aggregate year
-        bl_fte = enterprise_fte
+        # Aggregate year — baseline FTE is now growth-adjusted
+        bl_fte = round(enterprise_fte * growth_factor, 1)
         step_fte_totals = {}
         for step in active_steps:
             if step == 'location':
@@ -1131,7 +1174,10 @@ def run_waterfall(enterprise):
         step_savings = {}; pfte = bl_fte
         for step in active_steps:
             if step == 'location':
-                step_savings[step] = labor_saving - sum(step_savings.get(s, 0) for s in active_steps if s != 'location')
+                if not location_moves:
+                    step_savings[step] = 0  # no moves = no location saving
+                else:
+                    step_savings[step] = labor_saving - sum(step_savings.get(s, 0) for s in active_steps if s != 'location')
             else:
                 sfte = step_fte_totals.get(step, bl_fte)
                 step_savings[step] = (pfte - sfte) * avg_cost_per_fte
@@ -1150,7 +1196,8 @@ def run_waterfall(enterprise):
 
         attrition_factor = min(1.0, 1 - (1 - attrition) ** (year * 12))
         realized_saving = labor_saving * attrition_factor
-        redeployed_cost = realized_saving * redeployment
+        # FIX: Redeployment cost only when realized saving is positive
+        redeployed_cost = max(0, realized_saving) * redeployment if realized_saving > 0 else 0
         net_saving = realized_saving - redeployed_cost - total_tech
 
         # Pool snapshot for this year
@@ -1185,22 +1232,38 @@ def run_waterfall(enterprise):
     total_labor_saving = sum(y['total_labor_saving'] for y in yearly_data)
     total_tech_cost = sum(y['total_tech'] for y in yearly_data)
     total_net = sum(y['net_saving'] for y in yearly_data)
-    cumulative = []; running = 0
-    for y in yearly_data: running += y['net_saving']; cumulative.append(round(running, 0))
-    payback_year = None
-    for i, c in enumerate(cumulative):
-        if c > 0: payback_year = i + 1; break
-    roi_pct = round((total_net / max(total_tech_cost, 1)) * 100, 1) if total_tech_cost > 0 else 0
-    npv = sum(y['net_saving'] / ((1 + discount_rate) ** y['year']) for y in yearly_data)
 
-    # IRR
+    # Implementation costs (one-time, non-tech) — needed before payback
     impl = enterprise.get('implementation_costs', {})
     impl_total = sum(impl.get(k, 0) for k in ['change_management', 'training', 'integration'])
     contingency = impl_total * impl.get('contingency_pct', 0.10)
     impl_grand_total = impl_total + contingency
-    yr0_investment = -(total_tech_cost + impl_grand_total) if yearly_data else 0
-    cash_flows = [yr0_investment] + [y['net_saving'] for y in yearly_data]
-    irr = _calc_irr(cash_flows)
+
+    # ═══ UNIFIED CASH FLOW BASIS ═══
+    tech_one_time_y1 = yearly_data[0]['tech_one_time'] if yearly_data else 0
+    year0_investment = tech_one_time_y1 + impl_grand_total
+    yearly_cash_flows = [y['net_saving'] for y in yearly_data]
+
+    # FIX: Payback includes Year-0 investment — cumulative starts negative
+    cumulative = []; running = -year0_investment
+    for y in yearly_data: running += y['net_saving']; cumulative.append(round(running, 0))
+    payback_year = None
+    for i, c in enumerate(cumulative):
+        if c > 0: payback_year = i + 1; break
+
+    # ROI: total net benefit / total investment (same basis)
+    total_investment = year0_investment + sum(y['tech_recurring'] for y in yearly_data)
+    roi_pct = round((total_net / max(total_investment, 1)) * 100, 1) if total_investment > 0 else 0
+
+    # NPV: discount year-0 investment + yearly cash flows at same rate
+    npv = -year0_investment  # year 0
+    for y in yearly_data:
+        npv += y['net_saving'] / ((1 + discount_rate) ** y['year'])
+    npv = round(npv, 0)
+
+    # IRR: uses same cash flow stream
+    irr_cash_flows = [-year0_investment] + yearly_cash_flows
+    irr = _calc_irr(irr_cash_flows)
 
     # Additional analytics
     cost_of_inaction = _calc_cost_of_inaction(enterprise, horizon_years)
@@ -1252,11 +1315,20 @@ def run_waterfall(enterprise):
     location_breakdown = {
         'before': loc_before_agg, 'after': loc_after_agg,
         'blended_cost_before': round(blended_baseline_cost, 0),
-        'blended_cost_after': round(
-            yearly_data[-1]['queue_details'][0]['step_results'].get('location', {}).get(
-                'effective_cost_per_fte', blended_baseline_cost), 0
-        ) if yearly_data and yearly_data[-1].get('queue_details') else round(blended_baseline_cost, 0)
     }
+    # Compute blended_cost_after as FTE-weighted average across all queues
+    if yearly_data and yearly_data[-1].get('queue_details'):
+        total_loc_fte = 0; weighted_cost_sum = 0
+        for yq in yearly_data[-1]['queue_details']:
+            loc_res = yq.get('step_results', {}).get('location', {})
+            q_fte = loc_res.get('fte', 0)
+            q_cost = loc_res.get('effective_cost_per_fte', blended_baseline_cost)
+            total_loc_fte += q_fte
+            weighted_cost_sum += q_fte * q_cost
+        location_breakdown['blended_cost_after'] = round(
+            weighted_cost_sum / max(total_loc_fte, 1), 0) if total_loc_fte > 0 else round(blended_baseline_cost, 0)
+    else:
+        location_breakdown['blended_cost_after'] = round(blended_baseline_cost, 0)
 
     return {
         'summary': {
@@ -1266,6 +1338,7 @@ def run_waterfall(enterprise):
             'total_labor_saving': round(total_labor_saving, 0),
             'total_tech_cost': round(total_tech_cost, 0),
             'total_net_benefit': round(total_net, 0),
+            'total_investment': round(total_investment, 0),
             'roi_pct': roi_pct, 'payback_year': payback_year,
             'npv': round(npv, 0), 'irr': irr,
             'horizon_years': horizon_years, 'cumulative': cumulative,
@@ -1318,7 +1391,7 @@ def calc_initiative_impacts(enterprise, all_queues, horizon_months, active_steps
             queues_impacted += 1
             baseline = calc_queue_baseline(q)
             anchored_fte = fixed_baseline_ftes[idx] if fixed_baseline_ftes else baseline['fte']
-            # Use simple single-initiative impact (no pool consumption for per-initiative display)
+            # Standalone potential: uses unlimited pools (not netted against other initiatives)
             vq = copy.deepcopy(q)
             dummy_pools = {lever: {'ceiling_fte': 99999, 'consumed_fte': 0, 'remaining_fte': 99999,
                                     'ceiling_contacts': 999999, 'consumed_contacts': 0,
@@ -1791,6 +1864,145 @@ def del_tech(tid):
     e = _get_store()
     e['technology'] = [t for t in e.get('technology', []) if t['id'] != tid]
     return jsonify({'ok': True})
+
+@app.route('/api/demo/rheem', methods=['POST'])
+def load_rheem_demo():
+    """Rheem case study — 7 BUs + 3rd party, all onshore base, answered calls."""
+    e = default_enterprise()
+    e['program_name'] = 'Rheem Contact Centre Transformation'
+    e['enterprise_fte'] = 524
+    e['planning_horizon_years'] = 5
+    e['currency'] = 'USD'
+    e['global_volume_growth_pct'] = 0.0     # Fixed FTE approach — no volume growth on savings
+    e['global_wage_inflation_pct'] = 0.03   # 3% YoY (Image 5 row 34)
+    e['discount_rate'] = 0.10
+    e['attrition_rate_monthly'] = 0.025
+    e['redeployment_pct'] = 0.10
+    # BASE YEAR: Everything onshore
+    e['location_mix'] = {
+        'onshore': {'fte': 311, 'pct': 0.593}, 'nearshore': {'fte': 0, 'pct': 0},
+        'offshore': {'fte': 0, 'pct': 0}, '3rd_party': {'fte': 213, 'pct': 0.407},
+    }
+    e['salary_rates'] = {
+        'onshore': 100000, 'nearshore': 36000, 'offshore': 23850, '3rd_party': 61000,
+    }
+    e['implementation_costs'] = {
+        'change_management': 8500000, 'training': 4300000, 'integration': 0, 'contingency_pct': 0.10,
+    }
+    # 7 BUs + 1 Third Party — ANSWERED CALLS (Image 2)
+    bu_data = [
+        ('WHD (Water Heater)', 140, 305250, 9.18, 100000),
+        ('ACD & Nordyne (Air)', 39, 245000, 6.14, 100000),
+        ('HTPG (Commercial)', 27, 50000, 3.39, 100000),
+        ('Raypak', 48, 84000, 9.52, 100000),
+        ('Canada (Consumer)', 27, 41742, 5.39, 100000),
+        ('IBC', 10, 15000, 11.27, 100000),
+        ('Friedrich', 20, 43138, 5.00, 100000),
+        ('Enablx (3rd Party)', 213, 1500000, 7.28, 61000),
+    ]
+    rheem_mix = [('orders', 0.30, 0.40), ('technical_support', 0.60, 0.70), ('warranty', 0.10, 0.65)]
+    thirdp_mix = [('orders', 0.40, 0.35), ('technical_support', 0.20, 0.65), ('warranty', 0.40, 0.60)]
+    bus = []
+    for name, fte, vol, aht, cost in bu_data:
+        bu = default_bu(name); bu['cost_per_fte'] = cost; bu['current_fte'] = fte
+        bu['shrinkage_pct'] = 0.30; bu['occupancy_voice'] = 0.82
+        bu['channels'] = ['voice']; bu['processes'] = ['orders','technical_support','warranty']
+        bu['total_monthly_volume'] = round(vol / 12); bu['queues'] = []
+        mix = thirdp_mix if '3rd Party' in name else rheem_mix
+        for proc, pct, cmplx in mix:
+            q_vol = round(vol / 12 * pct)
+            if q_vol < 10: continue
+            q = default_queue('voice', proc, q_vol, bu)
+            q['handle_time_minutes'] = aht; q['paid_hours_per_fte'] = 1800
+            q['complexity'] = cmplx; q['repeat_contact_pct'] = 0.12
+            q['transfer_pct'] = 0.08; q['fcr_pct'] = 0.70; q['csat_score'] = 3.5; q['abandon_rate'] = 0.03
+            bu['queues'].append(q)
+        bus.append(bu)
+    e['business_units'] = bus
+    # 6 Automation & AI — target: 88/311 in-house + 38/213 3rd party
+    e['initiatives_auto'] = [
+        {'name':'Intelligent Document Processing (IDP)',
+         'levers':[{'lever':'aht_reduction','process_impacts':{'orders':0.15}}],
+         'eligible_channels':['voice'],'complexity':'medium',
+         'description':'80% efficiency on orders (Img4 r18)',
+         'ramp_year1':0.30,'ramp_year2':0.65,'ramp_year3':0.80,'adoption_pct':0.80,
+         'risk_category':'technology','risk_likelihood':0.3,'risk_impact':0.3},
+        {'name':'Self Service IVR NLP Automation',
+         'levers':[{'lever':'deflection','process_impacts':{'_all':0.20}},
+                   {'lever':'aht_reduction','process_impacts':{'_all':0.12}}],
+         'eligible_channels':['voice'],'complexity':'high',
+         'description':'20% deflection + AHT save (Img4 r6,16)',
+         'ramp_year1':0.15,'ramp_year2':0.28,'ramp_year3':0.28,'adoption_pct':0.55,
+         'risk_category':'technology','risk_likelihood':0.4,'risk_impact':0.5},
+        {'name':'Self Service Live Chat',
+         'levers':[{'lever':'deflection','process_impacts':{'_all':0.08}}],
+         'eligible_channels':['voice'],'complexity':'medium',
+         'description':'8% deflection to chat (Img4 r7)',
+         'ramp_year1':0.30,'ramp_year2':0.55,'ramp_year3':0.75,'adoption_pct':0.80,
+         'risk_category':'change','risk_likelihood':0.3,'risk_impact':0.4},
+        {'name':'Self Service Virtual Assistant',
+         'levers':[{'lever':'deflection','process_impacts':{'_all':0.22}}],
+         'eligible_channels':['voice'],'complexity':'high',
+         'description':'VA ramp 0/10/22/30/30% (Img4 r11-15)',
+         'ramp_year1':0.02,'ramp_year2':0.12,'ramp_year3':0.28,'adoption_pct':0.38,
+         'risk_category':'technology','risk_likelihood':0.4,'risk_impact':0.6},
+        {'name':'Agent Assist & Knowledge Management',
+         'levers':[{'lever':'aht_reduction','process_impacts':{'_all':0.12}}],
+         'eligible_channels':['voice'],'complexity':'medium',
+         'description':'AHT 7.5/20/20/20/20% (Img4 r24-28)',
+         'ramp_year1':0.35,'ramp_year2':0.75,'ramp_year3':1.00,'adoption_pct':0.20,
+         'risk_category':'technology','risk_likelihood':0.3,'risk_impact':0.4},
+        {'name':'Intelligent Call Summarization',
+         'levers':[{'lever':'acw_reduction','process_impacts':{'_all':0.25}}],
+         'eligible_channels':['voice'],'complexity':'low',
+         'description':'0.5 min save (Img5 r29)',
+         'ramp_year1':0.45,'ramp_year2':0.80,'ramp_year3':1.00,'adoption_pct':0.80,
+         'risk_category':'technology','risk_likelihood':0.2,'risk_impact':0.2},
+    ]
+    # Service Delivery — 15% efficiency
+    import copy as _c
+    e['initiatives_opmodel'] = [
+        _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Shrinkage' in i['name'])),
+        _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Schedule' in i['name'])),
+        _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Tiered' in i['name'])),
+        _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Cross-Skilling' in i['name'])),
+        _c.deepcopy(next(i for i in OPMODEL_LIBRARY if 'Quality' in i['name'])),
+    ]
+    # Location: Tech Support + Warranty → Nearshore (Image 7)
+    e['location_strategy'] = [
+        {'id':_uid(),'from_location':'onshore','to_location':'nearshore',
+         'move_pct':0.85,'channels':['voice'],'processes':['technical_support'],
+         'description':'Tech Support → Nearshore (Img7 r109-111)'},
+        {'id':_uid(),'from_location':'onshore','to_location':'nearshore',
+         'move_pct':0.80,'channels':['voice'],'processes':['warranty'],
+         'description':'Warranty → Nearshore (Img7 r112-114)'},
+    ]
+    # Technology (Image 3 prospect costs)
+    e['technology'] = [
+        {'id':_uid(),'name':'IVR NLP Platform','category':'ai','cost_type':'both',
+         'one_time':0,'recurring_monthly':62000,'start_month':1,'end_month':60,
+         'linked_initiatives':[],'description':'$0.02/min IVR (Img3 D.2)'},
+        {'id':_uid(),'name':'IDP Platform','category':'automation','cost_type':'both',
+         'one_time':0,'recurring_monthly':1600,'start_month':3,'end_month':60,
+         'linked_initiatives':[],'description':'$0.03/page (Img3 D.1)'},
+        {'id':_uid(),'name':'Agent Assist (Zingtree)','category':'ai','cost_type':'both',
+         'one_time':0,'recurring_monthly':3700,'start_month':1,'end_month':60,
+         'linked_initiatives':[],'description':'$210/user/yr (Img3 C.7)'},
+    ]
+    e['kpis'] = [
+        {'name':'AHT','unit':'minutes','channels':['voice'],'processes':['all'],
+         'current_value':8.6,'benchmark_value':6.5,'impact':'decrease','enabled':True,'category':'channel'},
+        {'name':'FCR','unit':'%','channels':['voice'],'processes':['all'],
+         'current_value':70,'benchmark_value':78,'impact':'increase','enabled':True,'category':'channel'},
+        {'name':'Abandon Rate','unit':'%','channels':['voice'],'processes':['all'],
+         'current_value':3.0,'benchmark_value':2.0,'impact':'decrease','enabled':True,'category':'channel'},
+    ]
+    _store['enterprise'] = e
+    return jsonify({'ok':True,'message':'Rheem loaded — 7 BUs + 3rd party, all onshore base',
+                    'summary':{'fte':524,'in_house':311,'third_party':213,'bus':len(bus),
+                               'queues':sum(len(b['queues']) for b in bus),
+                               'initiatives':len(e['initiatives_auto'])+len(e['initiatives_opmodel'])}})
+
 
 @app.route('/api/run', methods=['POST'])
 def run():

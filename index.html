@@ -28,7 +28,7 @@
   --ey-gray-50: #F7F7FA;
   --ey-white: #FFFFFF;
   --ey-green: #168736;
-  --ey-green-bg: #168736 15;
+  --ey-green-bg: #16873615;
   --ey-red: #C4122F;
   --ey-red-bg: #C4122F15;
   --ey-blue: #155CB4;
@@ -510,7 +510,7 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
       <span class="nav-icon">▶</span> Run Model
     </div>
     <div class="nav-item" data-page="impact" onclick="goPage('impact')">
-      <span class="nav-icon">◉</span> Initiative Impact
+      <span class="nav-icon">◉</span> Standalone Potential
     </div>
     <div class="nav-item" data-page="dashboard" onclick="goPage('dashboard')">
       <span class="nav-icon">■</span> Dashboard
@@ -528,7 +528,7 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
       <span class="nav-icon">≡</span> Queue Details
     </div>
     <div class="nav-item" data-page="recs" onclick="goPage('recs')">
-      <span class="nav-icon">★</span> Recommendations
+      <span class="nav-icon">★</span> Suggested Initiatives
     </div>
     <div class="nav-item" data-page="validation" onclick="goPage('validation')">
       <span class="nav-icon">✓</span> Validation
@@ -545,11 +545,14 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
 <div class="page active" id="page-enterprise">
   <div class="objective-banner">
     <h3>Tool Objective</h3>
-    <p>Model the financial and operational impact of contact centre transformation initiatives across automation, operating model, and location strategy levers — building an evidence-based business case for investment.</p>
+    <p>Growth-aware rapid contact centre business case tool. Estimates value across automation, operating model, and location levers — with pool-based ceilings to prevent double-counting, phased benefit realization, and consultant-led scenario modeling.</p>
   </div>
 
   <div class="page-header">
     <div><h1>Enterprise Setup</h1><p>Define program parameters, location mix, salary rates, and planning horizon.</p></div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="loadRheemDemo()" style="background:var(--ey-dark);color:var(--ey-yellow)">⚡ Load Rheem Demo</button>
+    </div>
   </div>
 
   <div class="card">
@@ -767,9 +770,9 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
 <!-- ════════════════ PAGE 9: RUN MODEL ════════════════ -->
 <div class="page" id="page-run">
   <div style="text-align:center;padding:60px 20px">
-    <h1 style="font-size:28px;margin-bottom:12px">Run Hybrid Pool Engine</h1>
+    <h1 style="font-size:28px;margin-bottom:12px">Run Business Case Engine</h1>
     <p style="color:var(--ey-gray-500);max-width:500px;margin:0 auto 32px">
-      Pool-based netting with stepped realization (90% → 75% → 60% → 45%). Auditable ceilings prevent double-counting. Yearly ramp with S-curve monthly interpolation.
+      Growth-aware rapid business case with pool-based netting and stepped realization. Auditable ceilings prevent double-counting. Yearly ramp with S-curve interpolation. Consultant-led scenario modeling.
     </p>
     <div id="run-status" style="margin-bottom:20px"></div>
     <button class="btn btn-run" onclick="runModel()" id="run-btn" style="font-size:18px;padding:16px 48px">
@@ -785,7 +788,7 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
 <!-- ════════════════ PAGE 10: INITIATIVE IMPACT SUMMARY ════════════════ -->
 <div class="page" id="page-impact">
   <div class="page-header">
-    <div><h1>Initiative Impact Summary</h1><p>Per-initiative contribution — grouped by waterfall layer.</p></div>
+    <div><h1>Standalone Initiative Potential</h1><p>Pre-netted initiative opportunity — each initiative modeled in isolation. Totals will not reconcile to the netted business case.</p></div>
   </div>
   <div id="impact-content"></div>
 </div>
@@ -793,7 +796,7 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
 <!-- ════════════════ PAGE 11: DASHBOARD ════════════════ -->
 <div class="page" id="page-dashboard">
   <div class="page-header">
-    <div><h1>Business Case Dashboard</h1><p>Summary of FTE, cost, savings, ROI, and payback across the planning horizon.</p></div>
+    <div><h1>Business Case Dashboard</h1><p>Net ROI, NPV, payback, and FTE impact across the planning horizon. All metrics use a unified cash flow basis.</p></div>
   </div>
   <div id="dashboard-content"></div>
 </div>
@@ -830,15 +833,15 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
   <div id="details-content"></div>
 </div>
 
-<!-- ════════════════ PAGE 13: RECOMMENDATIONS ════════════════ -->
+<!-- ════════════════ PAGE 16: RECOMMENDATIONS ════════════════ -->
 <div class="page" id="page-recs">
   <div class="page-header">
-    <div><h1>Recommendations</h1><p>Gap-driven suggestions based on KPI analysis.</p></div>
+    <div><h1>Suggested Initiatives</h1><p>Logic-driven suggestions based on KPI gap analysis. Not AI-optimized — intended as a starting point for consultant-led selection.</p></div>
   </div>
   <div id="recs-content"></div>
 </div>
 
-<!-- ════════════════ PAGE 14: VALIDATION ════════════════ -->
+<!-- ════════════════ PAGE 17: VALIDATION ════════════════ -->
 <div class="page" id="page-validation">
   <div class="page-header">
     <div><h1>Validation & Warnings</h1><p>Sanity checks on inputs and outputs.</p></div>
@@ -1107,6 +1110,22 @@ function goPage(id){
   if(id==='recs'&&_result)renderRecs();
   if(id==='validation'&&_result)renderValidation();
   window.scrollTo(0,0);
+}
+
+/* ═══ DEMO DATA ═══ */
+async function loadRheemDemo(){
+  if(!confirm('Load Rheem Manufacturing case study? This will replace all current data.')) return;
+  try {
+    const r = await fetch(API+'/api/demo/rheem', {method:'POST'});
+    const d = await r.json();
+    if(d.ok){
+      toast('Rheem demo loaded: '+d.summary.fte+' FTE, '+d.summary.bus+' BUs, '+d.summary.queues+' queues, '+d.summary.initiatives+' initiatives');
+      // Reload all data
+      await init();
+    } else {
+      toast('Failed to load demo','error');
+    }
+  } catch(e){ toast('Error: '+e.message,'error'); }
 }
 
 /* ═══ INIT ═══ */
@@ -2243,10 +2262,10 @@ function renderDashboard(){
     <div class="metric-card yellow"><div class="metric-label">Baseline FTE</div><div class="metric-value">${fmtN(s.baseline_fte,0)}</div></div>
     <div class="metric-card green"><div class="metric-label">Final FTE</div><div class="metric-value">${fmtN(s.final_fte,0)}</div><div class="metric-sub">↓ ${fmtN(s.fte_reduction,0)} reduction</div></div>
     <div class="metric-card blue"><div class="metric-label">Total Net Benefit</div><div class="metric-value">${fmt(s.total_net_benefit)}</div></div>
-    <div class="metric-card teal"><div class="metric-label">ROI</div><div class="metric-value">${s.roi_pct}%</div></div>
+    <div class="metric-card teal"><div class="metric-label">Net ROI (Total Spend)</div><div class="metric-value">${s.roi_pct}%</div></div>
     <div class="metric-card purple"><div class="metric-label">Payback</div><div class="metric-value">${s.payback_year?'Year '+s.payback_year:'N/A'}</div></div>
     <div class="metric-card red"><div class="metric-label">NPV</div><div class="metric-value">${fmt(s.npv)}</div></div>
-    <div class="metric-card orange"><div class="metric-label">IRR</div><div class="metric-value">${s.irr||0}%</div></div>
+    <div class="metric-card orange"><div class="metric-label">IRR</div><div class="metric-value">${s.irr != null ? s.irr+'%' : 'N/M'}</div></div>
     <div class="metric-card blue"><div class="metric-label">Blended Cost/FTE</div><div class="metric-value">${fmt(s.blended_baseline_cost||0)}</div></div>
   </div>`;
 
@@ -2385,7 +2404,7 @@ function renderDashboard(){
           <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">FTE Reduction</span><span class="mono" style="font-weight:600">${fmtN(sc.fte_reduction||0,0)}</span></div>
           <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">Net Benefit</span><span class="mono" style="font-weight:600;color:${(sc.total_net_benefit||0)>=0?'var(--ey-green)':'var(--ey-red)'}">${fmt(sc.total_net_benefit||0)}</span></div>
           <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">NPV</span><span class="mono" style="font-weight:600">${fmt(sc.npv||0)}</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">ROI</span><span class="mono" style="font-weight:600">${sc.roi_pct||0}%</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">Net ROI</span><span class="mono" style="font-weight:600">${sc.roi_pct||0}%</span></div>
           <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ey-gray-500)">Payback</span><span class="mono" style="font-weight:600">${sc.payback_year?'Year '+sc.payback_year:'N/A'}</span></div>
         </div>
       </div>`;
