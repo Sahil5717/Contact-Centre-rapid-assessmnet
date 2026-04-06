@@ -1999,6 +1999,9 @@ def load_rheem_demo():
         {'name':'Abandon Rate','unit':'%','channels':['voice'],'processes':['all'],
          'current_value':3.0,'benchmark_value':2.0,'impact':'decrease','enabled':True,'category':'channel'},
     ]
+    # Explicit waterfall order
+    e['waterfall_order'] = ['automation_ai', 'opmodel', 'location']
+    e['waterfall_active'] = {'automation_ai': True, 'opmodel': True, 'location': True}
     _store['enterprise'] = e
     return jsonify({'ok':True,'message':'Rheem loaded — 7 BUs + 3rd party, all onshore base',
                     'summary':{'fte':524,'in_house':311,'third_party':213,'bus':len(bus),

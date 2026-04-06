@@ -1118,14 +1118,17 @@ async function loadRheemDemo(){
   try {
     const r = await fetch(API+'/api/demo/rheem', {method:'POST'});
     const d = await r.json();
+    console.log('Demo response:', d);
     if(d.ok){
-      toast('Rheem demo loaded: '+d.summary.fte+' FTE, '+d.summary.bus+' BUs, '+d.summary.queues+' queues, '+d.summary.initiatives+' initiatives');
-      // Reload all data
+      toast('Rheem demo loaded: '+JSON.stringify(d.summary));
+      // Reload all data and re-render
       await init();
+      // Force re-render current page
+      goPage(_currentPage || 'enterprise');
     } else {
-      toast('Failed to load demo','error');
+      toast('Failed to load demo: '+(d.error||'unknown'),'error');
     }
-  } catch(e){ toast('Error: '+e.message,'error'); }
+  } catch(e){ console.error('loadRheemDemo error:',e); toast('Error: '+e.message,'error'); }
 }
 
 /* ═══ INIT ═══ */
@@ -1144,13 +1147,14 @@ async function init(){
     _procComplexityDefaults=pc.complexity_defaults||{};_poolTypes=pc.pool_types||[];_steppedRealization=pc.stepped_realization||[0.9,0.75,0.6,0.45];
   }catch(e){console.warn('Process config not loaded',e)}
   // Render all visible sections
-  try{renderBUs()}catch(e){}
-  try{renderQueues()}catch(e){}
-  try{renderKPIs()}catch(e){}
-  try{renderInits('auto')}catch(e){}
-  try{renderInits('opmodel')}catch(e){}
-  try{renderLocMoves()}catch(e){}
-  try{renderTech()}catch(e){}
+  console.log('init() loaded:',{bus:_bus.length,kpis:_kpis.length,auto:_autoInits.length,opmod:_opmodelInits.length,loc:_locMoves.length,tech:_techItems.length});
+  try{renderBUs()}catch(e){console.error('renderBUs failed:',e)}
+  try{renderQueues()}catch(e){console.error('renderQueues failed:',e)}
+  try{renderKPIs()}catch(e){console.error('renderKPIs failed:',e)}
+  try{renderInits('auto')}catch(e){console.error('renderInits auto failed:',e)}
+  try{renderInits('opmodel')}catch(e){console.error('renderInits opmodel failed:',e)}
+  try{renderLocMoves()}catch(e){console.error('renderLocMoves failed:',e)}
+  try{renderTech()}catch(e){console.error('renderTech failed:',e)}
 }
 
 function loadEnterpriseUI(){
