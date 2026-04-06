@@ -1865,6 +1865,12 @@ def del_tech(tid):
     e['technology'] = [t for t in e.get('technology', []) if t['id'] != tid]
     return jsonify({'ok': True})
 
+@app.route('/api/reset', methods=['POST'])
+def reset_store():
+    """Reset all data to empty defaults."""
+    _store['enterprise'] = default_enterprise()
+    return jsonify({'ok': True, 'message': 'Reset to empty defaults'})
+
 @app.route('/api/demo/rheem', methods=['POST'])
 def load_rheem_demo():
     """Rheem case study — 7 BUs + 3rd party, all onshore base, answered calls."""

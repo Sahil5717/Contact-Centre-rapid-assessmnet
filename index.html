@@ -552,6 +552,7 @@ tbody td.mono{font-family:var(--font-mono);font-size:12px}
     <div><h1>Enterprise Setup</h1><p>Define program parameters, location mix, salary rates, and planning horizon.</p></div>
     <div class="actions">
       <button class="btn btn-primary" onclick="loadRheemDemo()" style="background:var(--ey-dark);color:var(--ey-yellow)">⚡ Load Rheem Demo</button>
+      <button class="btn btn-ghost" onclick="resetToEmpty()" style="color:var(--ey-red);border-color:var(--ey-red)">🔄 Reset Empty</button>
     </div>
   </div>
 
@@ -1113,6 +1114,16 @@ function goPage(id){
 }
 
 /* ═══ DEMO DATA ═══ */
+async function resetToEmpty(){
+  if(!confirm('Reset all data to empty? This will clear everything.')) return;
+  try {
+    await fetch(API+'/api/reset', {method:'POST'});
+    toast('Reset to empty defaults');
+    await init();
+    goPage('enterprise');
+  } catch(e){ toast('Error: '+e.message,'error'); }
+}
+
 async function loadRheemDemo(){
   if(!confirm('Load Rheem Manufacturing case study? This will replace all current data.')) return;
   try {
